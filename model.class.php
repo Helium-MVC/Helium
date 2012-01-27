@@ -258,7 +258,6 @@ Abstract Class Model extends PVStaticInstance {
 		$defaults = array('validate' => true, 'use_schema' => true, 'sync_data' => true, 'validate_options' => array('event' => 'update'));
 
 		$options += $defaults;
-
 		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array('data' => $data, 'conditions' => $conditions, 'options' => $options), array('event' => 'args'));
 		$data = $filtered['data'];
 		$conditions = $filtered['conditions'];
@@ -276,25 +275,32 @@ Abstract Class Model extends PVStaticInstance {
 			$table_name = $this -> _formTableName(get_class($this));
 			$table_name = PVDatabase::formatTableName($table_name);
 			$defaults = $this -> _getModelDefaults();
-			$data += $defaults;
+			
 			
 			$input_data = array();
 			$primary_key = '';
 			$wherelist = isset($conditions['conditions']) ? $conditions['conditions'] : array();
-
-			foreach ($this->_schema as $field => $field_options) {
-				$field_options += $this -> _getFieldOptionsDefaults();
-
-				if ((!isset($field_options['null']) || (isset($field_options['null']) && !$field_options['null'])) || !empty($data[$field])) {
-					if ($field_options['primary_key']) {
-						$primary_key = $field;
-						$wherelist[$field] = (!empty($this -> _collection -> $field)) ? $field_options['default'] : $this -> _collection -> $field;
+			
+			if($options['use_schema']) {
+				$data += $defaults;
+				
+				foreach ($this->_schema as $field => $field_options) {
+					$field_options += $this -> _getFieldOptionsDefaults();
+	
+					if ((!isset($field_options['null']) || (isset($field_options['null']) && !$field_options['null'])) || !empty($data[$field])) {
+						if ($field_options['primary_key']) {
+							$primary_key = $field;
+							$wherelist[$field] = (!empty($this -> _collection -> $field)) ? $field_options['default'] : $this -> _collection -> $field;
+						}
+	
+						$input_data[$field] = (!$data[$field]) ? $this -> $field : $data[$field];
 					}
-
-					$input_data[$field] = (!$data[$field]) ? $this -> $field : $data[$field];
-				}
-
-			}//end foreach
+	
+				}//end foreach
+			} else {
+				$input_data = $data;
+				$wherelist = isset($conditions['conditions']) ? $conditions['conditions'] : array();
+			}
 			
 			$options = $this -> _configureConnection($options);
 			$result = PVDatabase::preparedUpdate($table_name, $input_data, $wherelist, array(), array(), $options);
@@ -320,7 +326,7 @@ Abstract Class Model extends PVStaticInstance {
 	 * @access public
 	 * @todo create a more complex delete
 	 */
-	public function delete($data) {
+	public function delete($data, array $options = array()) {
 
 		if (self::_hasAdapter(get_class(), __FUNCTION__))
 			return self::_callAdapter(get_class(), __FUNCTION__, $data);
@@ -335,7 +341,7 @@ Abstract Class Model extends PVStaticInstance {
 		$table_name = PVDatabase::formatTableName(strtolower($table_name));
 
 		$options = $this -> _configureConnection($options);
-		$result = PVDatabase::preparedDelete($table_name, $data, $whereformats = '');
+		$result = PVDatabase::preparedDelete($table_name, $data, array(), $options);
 		
 		self::_notify(get_class() . '::' . __FUNCTION__, $result, $data);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $result, $data);
@@ -372,10 +378,10 @@ Abstract Class Model extends PVStaticInstance {
 			$options['findOne'] = true;
 			$options = $this -> _configureConnection($options);
 			$result = PVDatabase::selectStatement($args, $options);
-
+			
 			if ($result) {
 				foreach ($result as $key => $value) {
-
+					
 					if (!PVValidator::isInteger($key))
 						$this -> addToCollectionWithName($key, $value);
 				}
