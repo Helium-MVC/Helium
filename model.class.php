@@ -211,6 +211,9 @@ Abstract Class Model extends PVStaticInstance {
 				 	if ($field_options['primary_key'] == true && !$field_options['auto_increment']) {
 						$primary_keys[$field] = $input_data[$field];
 					}
+					
+					if(isset($field_options['cast']))
+							$input_data[$field] = $this -> _castData($input_data[$field] , $field_options['cast']);
 	
 					if ($field_options['unique'] == true) {
 						//$primary_key=$field;
@@ -299,6 +302,9 @@ Abstract Class Model extends PVStaticInstance {
 						}
 	
 						$input_data[$field] = (!$data[$field]) ? $this -> $field : $data[$field];
+						
+						if(isset($field_options['cast']))
+							$input_data[$field] = $this -> _castData($input_data[$field] , $field_options['cast']);
 					}
 	
 				}//end foreach
@@ -309,7 +315,6 @@ Abstract Class Model extends PVStaticInstance {
 			
 			$options = $this -> _configureConnection($options);
 			$result = PVDatabase::preparedUpdate($table_name, $input_data, $wherelist, array(), array(), $options);
-
 			$this -> addToCollection($input_data);
 
 			if ($options['sync_data'])
@@ -318,7 +323,7 @@ Abstract Class Model extends PVStaticInstance {
 
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions);
-		
+
 		return $result;
 	}//end update
 
@@ -383,7 +388,7 @@ Abstract Class Model extends PVStaticInstance {
 			$options['findOne'] = true;
 			$options = $this -> _configureConnection($options);
 			$result = PVDatabase::selectStatement($args, $options);
-			
+		
 			if ($result) {
 				foreach ($result as $key => $value) {
 					
@@ -391,7 +396,7 @@ Abstract Class Model extends PVStaticInstance {
 						$this -> addToCollectionWithName($key, $value);
 				}
 			}//end if result
-
+			
 		} else {
 
 			$this -> checkSchema();
@@ -890,6 +895,48 @@ Abstract Class Model extends PVStaticInstance {
 		$defaults = self::_applyFilter(get_called_class(), __FUNCTION__, $defaults , array('event' => 'return'));
 		
 		return $defaults;
+	}
+	
+	/**
+	 * Cast data to a certain type. The cast option should be set in the schema in the model.
+	 * 
+	 * @param mixed $data The data to be casted to a different type
+	 * @param string $cast A string of what to cast to the data too. The options are:
+	 * 			'boolean', 'integer', 'float', 'string', 'array', 'object', 'null', 'mongoid'
+	 * 
+	 * @return mixed $data The data to a new casted type, if any
+	 * @access protected
+	 */
+	protected function _castData($data, $cast) {
+		
+		if (self::_hasAdapter(get_class(), __FUNCTION__))
+			return self::_callAdapter(get_class(), __FUNCTION__, $data, $cast);
+		
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $cast);
+		
+		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array('data' => $data, 'cast' => $cast), array('event' => 'args'));
+		$data = $filtered['data'];
+		$cast = $filtered['cast'];
+		
+		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array('data' => $data, 'cast' => $cast), array('event' => 'args'));
+		$data = $filtered['data'];
+		$cast = $filtered['cast'];
+		
+		$cast_types = array('boolean', 'integer', 'float', 'string', 'array', 'object', 'null');
+		if(in_array($cast, $cast_types)){
+			settype($data, $cast);
+		} else if($cast == 'mongoid'){
+			$data = new MongoID($data);
+		} else if($cast == 'array_recursive'){
+			settype($data, 'array');
+			$data = PVConversions::objectToArray($data);
+		}
+		
+		$data = self::_applyFilter(get_class(), __FUNCTION__, $data , array('event' => 'return'));
+		$data = self::_applyFilter(get_called_class(), __FUNCTION__, $data , array('event' => 'return'));
+		
+		return $data;
 	}
 
 	private function convertToPVStandardSearchQuery($data) {
