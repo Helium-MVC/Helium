@@ -23,8 +23,8 @@ Abstract Class Model extends PVStaticInstance {
 		else
 			$this -> registry = $registry;
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $registry);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $registry);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $registry);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $registry);
 
 	}
 	
@@ -127,7 +127,7 @@ Abstract Class Model extends PVStaticInstance {
 						$rule += $rule_defaults;
 					}
 
-					if ($this -> _checkValidationEvent($options['event'], $rule['event'])  && !PVValidator::check($key, $data[$field])) {
+					if ($this -> _checkValidationEvent($options['event'], $rule['event'])  && !PVValidator::check($key, @$data[$field])) {
 						$hasError = false;
 						$this -> _addValidationError($field, $rule['error']);
 					}
@@ -139,8 +139,8 @@ Abstract Class Model extends PVStaticInstance {
 
 		$this -> registry -> errors = $this -> errors;
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $hasError, $data);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $hasError, $data);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $hasError, $data);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $hasError, $data);
 
 		return $hasError;
 	}//end validate
@@ -160,6 +160,7 @@ Abstract Class Model extends PVStaticInstance {
 	 * 
 	 * @return boolean $created Returns true if the the object is created. Data will be added directly into the instance
 	 * @access public
+	 * @todo as unique modifier, if applicable
 	 */
 	public function create(array $data, array $options = array()) {
 
@@ -187,7 +188,7 @@ Abstract Class Model extends PVStaticInstance {
 			$this -> checkSchema();
 		}
 
-		if ($this -> validate($data)) {
+		if (!$options['validate'] || $this -> validate($data,$options['validate_options'])) {
 			$table_name = $this -> _formTableName(get_class($this));
 			$table_name = PVDatabase::formatTableName(strtolower($table_name));
 			$defaults = $this -> _getModelDefaults();
@@ -196,25 +197,29 @@ Abstract Class Model extends PVStaticInstance {
 			$input_data = array();
 			$primary_keys = array();
 			$auto_incremented_field = '';
-
-			foreach ($this->_schema as $field => $field_options) {
-				$field_options += $this -> _getFieldOptionsDefaults();
-				$input_data[$field] = (empty($data[$field])) ? $field_options['default'] : $data[$field];
-
-				if ($field_options['auto_increment'] == true) {
-					$auto_incremented_field = $field;
-					unset($input_data[$field]);
-				}
-				
-			 	if ($field_options['primary_key'] == true && !$field_options['auto_increment']) {
-					$primary_keys[$field] = $input_data[$field];
-				}
-
-				if ($field_options['unique'] == true) {
-					//$primary_key=$field;
-				}
-
-			}//end foreach
+			
+			if($options['validate']) {
+				foreach ($this->_schema as $field => $field_options) {
+					$field_options += $this -> _getFieldOptionsDefaults();
+					$input_data[$field] = (empty($data[$field])) ? $field_options['default'] : $data[$field];
+	
+					if ($field_options['auto_increment'] == true) {
+						$auto_incremented_field = $field;
+						unset($input_data[$field]);
+					}
+					
+				 	if ($field_options['primary_key'] == true && !$field_options['auto_increment']) {
+						$primary_keys[$field] = $input_data[$field];
+					}
+	
+					if ($field_options['unique'] == true) {
+						//$primary_key=$field;
+					}
+	
+				}//end foreach
+			} else {
+				$input_data = $data;
+			}
 		
 			$options = $this -> _configureConnection($options);
 			$id = PVDatabase::preparedReturnLastInsert($table_name, $auto_incremented_field, $table_name, $input_data, array(), $options);
@@ -227,8 +232,8 @@ Abstract Class Model extends PVStaticInstance {
 			}
 		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $created, $id, $data, $options);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $created, $id, $data, $options);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $created, $id, $data, $options);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $created, $id, $data, $options);
 
 		return $created;
 	}
@@ -311,9 +316,9 @@ Abstract Class Model extends PVStaticInstance {
 				$this -> sync();
 		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $result, $data, $conditions);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $result, $data, $conditions);
-
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions);
+		
 		return $result;
 	}//end update
 
@@ -343,8 +348,8 @@ Abstract Class Model extends PVStaticInstance {
 		$options = $this -> _configureConnection($options);
 		$result = PVDatabase::preparedDelete($table_name, $data, array(), $options);
 		
-		self::_notify(get_class() . '::' . __FUNCTION__, $result, $data);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $result, $data);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $data);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $data);
 
 		return $result;
 	}//end delete
@@ -442,8 +447,8 @@ Abstract Class Model extends PVStaticInstance {
 			}
 		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $conditions);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $conditions);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $conditions);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $conditions);
 	}
 
 	/**
@@ -547,8 +552,8 @@ Abstract Class Model extends PVStaticInstance {
 			}
 		}
 		
-		self::_notify(get_class() . '::' . __FUNCTION__, $conditions);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $conditions);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $conditions);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $conditions);
 	}
 
 	/**
@@ -744,8 +749,8 @@ Abstract Class Model extends PVStaticInstance {
 				$table .= '_' . strtolower($part);
 		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $name, $table);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $name, $table);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $name, $table);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $name, $table);
 		
 		$table = self::_applyFilter(get_class(), __FUNCTION__, $table , array('event' => 'return'));
 		$table = self::_applyFilter(get_called_class(), __FUNCTION__, $table , array('event' => 'return'));
@@ -812,8 +817,8 @@ Abstract Class Model extends PVStaticInstance {
 		
 		$this -> errors[$field][] = PVTemplate::errorMessage($error_message);
 		
-		self::_notify(get_class() . '::' . __FUNCTION__, $field, $error_message);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $field, $error_message);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $field, $error_message);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $field, $error_message);
 	}
 	
 	/**
@@ -853,8 +858,8 @@ Abstract Class Model extends PVStaticInstance {
 			$match = in_array($passed_event, $allowed_events);
 		}
 		
-		self::_notify(get_class() . '::' . __FUNCTION__, $match, $passed_event, $allowed_events);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $match, $passed_event, $allowed_events);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $match, $passed_event, $allowed_events);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $match, $passed_event, $allowed_events);
 		
 		$match = self::_applyFilter(get_class(), __FUNCTION__, $match , array('event' => 'return'));
 		$match = self::_applyFilter(get_called_class(), __FUNCTION__, $match , array('event' => 'return'));
