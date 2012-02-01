@@ -10,21 +10,32 @@ Abstract Class Model extends PVStaticInstance {
 		'storage' => ''
 		);
 
-	function __construct($registry = null) {
+	/**
+	 * The constructor for the model class. Can be used to assign default data to a model
+	 * 
+	 * @param mixed $data The value passed should either be null or an array
+	 * @param array $options Options to be set for the model
+	 * 
+	 * @return void
+	 * @access public
+	 */
+	public function __construct($data = null, array $options = array()) {
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $registry);
 
-		$registry = self::_applyFilter(get_class(), __FUNCTION__, $registry, array('event' => 'args'));
-		$registry = self::_applyFilter(get_called_class(), __FUNCTION__, $registry, array('event' => 'args'));
+		$data = self::_applyFilter(get_class(), __FUNCTION__, $data, array('event' => 'args'));
+		$data = self::_applyFilter(get_called_class(), __FUNCTION__, $data, array('event' => 'args'));
+		
+		$this -> registry = new PVCollection();
 
-		if ($registry == null)
-			$this -> registry = new PVCollection();
-		else
-			$this -> registry = $registry;
+		if ($data) {
+			foreach($data as $key => $value)
+				$this -> addToCollectionWithName($key, $value);
+		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $registry);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $registry);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $data);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $data);
 
 	}
 	
@@ -88,7 +99,8 @@ Abstract Class Model extends PVStaticInstance {
 	 * 
 	 * @param array $data The data to check for errors. Data should be in key => value format
 	 * @param array $options Options that be used to configure validation
-	 * 			- 'event' _array_: An array of events that validation will occur. Default is array('create', 'update')
+	 * 			- 'event' _array_: An array of events that validation will occur. Default is an empty
+	 * 			-'sync_data' _boolean_: If set to true, will sync the data passed to the model's collection
 	 * 
 	 * @return boolean $validation Returns true if no errors are found, otherwise returns false
 	 * @access public
@@ -101,7 +113,7 @@ Abstract Class Model extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $options);
 
-		$defaults = array('event' => '');
+		$defaults = array('event' => '', 'sync_data' => true);
 
 		$options += $defaults;
 
@@ -136,6 +148,12 @@ Abstract Class Model extends PVStaticInstance {
 			}//end foreach
 
 		}//end validators
+		
+		if($options['sync_data']) {
+			foreach($data as $key => $value) {
+				$this -> addToCollectionWithName($key, $value);
+			}
+		}
 
 		$this -> registry -> errors = $this -> errors;
 
@@ -229,7 +247,7 @@ Abstract Class Model extends PVStaticInstance {
 
 			if ($id) {
 				$conditions = array('conditions' => array($auto_incremented_field => $id));
-
+				
 				$this -> first($conditions);
 				$created = true;
 			}
@@ -321,8 +339,8 @@ Abstract Class Model extends PVStaticInstance {
 				$this -> sync();
 		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions, $options);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions, $options);
 
 		return $result;
 	}//end update
@@ -376,8 +394,13 @@ Abstract Class Model extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $conditions);
 
-		$conditions = self::_applyFilter(get_class(), __FUNCTION__, $conditions, array('event' => 'args'));
-		$conditions = self::_applyFilter(get_called_class(), __FUNCTION__, $conditions, array('event' => 'args'));
+		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
+		$conditions = $filtered['conditions'];
+		$options = $filtered['options'];
+		
+		$conditions = self::_applyFilter(get_called_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
+		$conditions = $filtered['conditions'];
+		$options = $filtered['options'];
 
 		if (PVDatabase::getDatabaseType() == 'mongo') {
 
@@ -387,8 +410,9 @@ Abstract Class Model extends PVStaticInstance {
 			$args = array('where' => $conditions, 'fields' => $fields, 'table' => $this -> _formTableName(get_class($this)));
 			$options['findOne'] = true;
 			$options = $this -> _configureConnection($options);
+			
 			$result = PVDatabase::selectStatement($args, $options);
-		
+			
 			if ($result) {
 				foreach ($result as $key => $value) {
 					
@@ -396,6 +420,9 @@ Abstract Class Model extends PVStaticInstance {
 						$this -> addToCollectionWithName($key, $value);
 				}
 			}//end if result
+			
+			if(isset($options['gridFS']))
+				$this -> addToCollectionWithName('getBytes', $result -> getBytes());
 			
 		} else {
 
@@ -452,8 +479,8 @@ Abstract Class Model extends PVStaticInstance {
 			}
 		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $conditions);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $conditions);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
 	}
 
 	/**
@@ -468,18 +495,31 @@ Abstract Class Model extends PVStaticInstance {
 	 * 			-'offset' _int_: An offset to the results in the query
 	 * 			-'order_by' _string_: How to order
 	 * 			-'join' _array_: Used the joins specefied in the child model in the '$_joins; variable
+	 * @param array $options Options can be used to customize the finding of data
+	 * 			-'results' _mixed_: How the results will be returned. Default option is 'object', in wich the results will be stored in an
+	 * 			stdObject. The other option is 'model', in which the results will be stored in a new instance of the current model
 	 * 
 	 * @return void Return results are added as part of the model
 	 * @access public
 	 * @todo Add in the ability for pagination
+	 * @todo Write a function for recording results into the current model collection
 	 */
-	public function find($conditions = array(), $options = array()) {
+	public function find($conditions = array(), array $options = array()) {
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $conditions);
 
-		$conditions = self::_applyFilter(get_class(), __FUNCTION__, $conditions, array('event' => 'args'));
-		$conditions = self::_applyFilter(get_called_class(), __FUNCTION__, $conditions, array('event' => 'args'));
+		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
+		$conditions = $filtered['conditions'];
+		$options = $filtered['options'];
+		
+		$conditions = self::_applyFilter(get_called_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
+		$conditions = $filtered['conditions'];
+		$options = $filtered['options'];
+		
+		$defaults = array('results' => 'object');
+		$options += $defaults;
+		
 		if (PVDatabase::getDatabaseType() == 'mongo') {
 			
 			$args = array(
@@ -496,6 +536,18 @@ Abstract Class Model extends PVStaticInstance {
 			$result = PVDatabase::selectStatement($args, $options);
 
 			foreach ($result as $row) {
+				
+				if(isset($options['gridFS'])){
+					$bytes = $row -> getBytes();
+					$row = array('file' => $row-> file);
+					$row['getBytes'] = $bytes;
+				}
+				
+				if($options['results'] == 'model') {
+					$class= get_called_class();
+					$row = new $class($row);
+				} 
+				
 				$this -> addToCollection($row);
 			}
 
@@ -543,14 +595,26 @@ Abstract Class Model extends PVStaticInstance {
 			$result = PVDatabase::preparedSelect($query, $input_data);
 			
 			if(PVDatabase::getDatabaseType() == 'postgresql') {
-				while($row = PVDatabase::fetchFields($result))
+				while($row = PVDatabase::fetchFields($result)){
+						
+					if($options['results'] == 'model') {
+						$class= get_called_class();
+						$row = new $class($row);
+					}
+					
 					$this -> addToCollection($row);
+				}
 			} else {
 				$rows = PVDatabase::fetchFields($result);
 				
 				if(!empty($rows)) {
 					foreach ($rows as $row) {
 					
+						if($options['results'] == 'model') {
+							$class= get_called_class();
+							$row = new $class($row);
+						}
+			 
 						$this -> addToCollection($row);
 					}
 				}
