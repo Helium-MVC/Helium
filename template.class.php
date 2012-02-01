@@ -111,11 +111,6 @@ Class Template extends PVStaticInstance {
 
 		$path = SITE_PATH . '/views' . '/' . $view['view'] . '/' . $view['prefix'] . '.' . $view['type'] . '.' . $view['extension'];
 
-		if (file_exists($path) == false) {
-			throw new Exception('Template not found in ' . $path);
-			return false;
-		}
-
 		$this -> tempate_path = $path;
 		
 		if(!$template['disable'])
@@ -138,6 +133,20 @@ Class Template extends PVStaticInstance {
 		
 		return PVTemplate::updateHeader($buffer);
 	}
+	
+	/**
+	 * Peforms a final check on the header to ensure that the site title
+	 * has been site. If it has not, it will set it automatically.
+	 * 
+	 */
+	protected function _finalHeaderCheck($view) {
+		
+		$title = PVTemplate::getSiteTitle();
+		
+		if(empty($title))
+			PVTemplate::setTitleTitle( $view );
+		
+	}
 
 	/**
 	 * Displays the content in a view that will render in a template. Call this function once in the template folder.
@@ -154,7 +163,7 @@ Class Template extends PVStaticInstance {
 			$$key = $value;
 		}
 
-		include ($this -> tempate_path);
+		require ($this -> tempate_path);
 	}
 	
 	public function header(){
