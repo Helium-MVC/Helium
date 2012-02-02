@@ -4,9 +4,9 @@ Abstract Class Controller extends PVStaticInstance {
 
 	protected $registry;
 	
-	protected $_template = array();
+	protected $_view = array();
 	
-	protected $_layout = array();
+	protected $_template = array();
 
 	/**
 	 * Instantiates that controller object and creates the default parametets for the layout and the template
@@ -19,23 +19,23 @@ Abstract Class Controller extends PVStaticInstance {
 	public function __construct($registry) {
 		$this->registry = $registry;
 		
-		$default_template = array(
+		$default_view = array(
 			'type' => 'html',
 			'extension' =>'php',
 			'disable' => false,
 		);
 		
-		$this->_template = $default_template;
+		$this->_view = $default_view;
 		
-		$default_layout = array(
+		$default_template = array(
 			'prefix' => 'default',
 			'type' => 'html',
 			'extension' =>'php',
 			'disable' => false,
 		);
 		
+		$this->_view = $default_view;
 		$this->_template = $default_template;
-		$this->_layout = $default_layout;
 	}
 
 	protected function getModel($model_name){
@@ -63,7 +63,7 @@ Abstract Class Controller extends PVStaticInstance {
 	 * @access public
 	 */
 	public function getView() {
-		return $this->_layout;
+		return $this->_view;
 	}
 	
 	/**
@@ -71,8 +71,8 @@ Abstract Class Controller extends PVStaticInstance {
 	 * of the controller. The default view is the child's controller's method name followed by '.html.php'.
 	 */
 	protected function _renderView(array $args = array()) {
-		$args += $this -> template;
-		$this -> template = $args;
+		$args += $this -> _view;
+		$this ->_view = $args;
 	}
 	
 	/**
@@ -89,8 +89,8 @@ Abstract Class Controller extends PVStaticInstance {
 	 * @access public
 	 */
 	protected function _renderTemplate(array $args = array()) {
-		$args += $this->_layout;
-		$this->_layout = $args;
+		$args += $this->_template;
+		$this->_template = $args;
 	}
 	
 	/**
