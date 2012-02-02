@@ -58,12 +58,12 @@ class Router extends PVStaticInstance {
 		$this -> parseControllerVars($vars);
 		
 		$template = $controller -> getTemplate();
-		$layout = $controller -> getView();
+		$view = $controller -> getView();
 		
-		$template_defaults = array('view' => $this->controller, 'prefix' => $this->action);
-		$template += $template_defaults;
-
-		$this -> registry -> template -> show($template, $layout);
+		$view_defaults = array('view' => $this->controller, 'prefix' => $this->action);
+		$view  += $view_defaults;
+		
+		$this -> registry -> template -> show($view, $template);
 	}
 	
 	/**
