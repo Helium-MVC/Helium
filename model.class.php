@@ -421,7 +421,7 @@ Abstract Class Model extends PVStaticInstance {
 				}
 			}//end if result
 			
-			if(isset($options['gridFS']))
+			if(isset($options['gridFS']) && method_exists($result, 'getBytes'))
 				$this -> addToCollectionWithName('getBytes', $result -> getBytes());
 			
 		} else {
@@ -538,7 +538,11 @@ Abstract Class Model extends PVStaticInstance {
 			foreach ($result as $row) {
 				
 				if(isset($options['gridFS'])){
-					$bytes = $row -> getBytes();
+						
+					$bytes = 0;
+					if(method_exists($row, 'getBytes'))
+						$bytes = $row -> getBytes();
+					
 					$row = array('file' => $row-> file);
 					$row['getBytes'] = $bytes;
 				}
