@@ -49,9 +49,6 @@ Class Template extends PVStaticInstance {
 			return false;
 		}
 		require_once $file;
-		//$object_name=strtolower($class);
-		//$object= new $class;
-		//$this->vars[$object_name]=$object;
 	}
 
 	/**
@@ -99,8 +96,6 @@ Class Template extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $view, $template);
 		
-		ob_start( array($this , '_displayContents' ) );
-		
 		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array('view' => $view, 'template' => $template), array('event' => 'args'));
 		$view = $filtered['view'];
 		$template = $filtered['template'];
@@ -108,6 +103,10 @@ Class Template extends PVStaticInstance {
 		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array('view' => $view, 'template' => $template), array('event' => 'args'));
 		$view = $filtered['view'];
 		$template = $filtered['template'];
+		
+		$this -> _titleCheck($view);
+		
+		ob_start( array($this , '_displayContents' ) );
 
 		$path = SITE_PATH . '/views' . '/' . $view['view'] . '/' . $view['prefix'] . '.' . $view['type'] . '.' . $view['extension'];
 
@@ -136,15 +135,25 @@ Class Template extends PVStaticInstance {
 	
 	/**
 	 * Peforms a final check on the header to ensure that the site title
-	 * has been site. If it has not, it will set it automatically.
+	 * has been site. If it has not, it will set it automatically. The $view that is passed in is an
+	 * array that contains information about the entire view.
 	 * 
+	 * @param array $view An array that contains the information about the view to be displayed
+	 * 
+	 * @return void
+	 * @access protected
 	 */
-	protected function _finalHeaderCheck($view) {
+	protected function _titleCheck($view) {
+		
+		if (self::_hasAdapter(get_class(), __FUNCTION__))
+			return self::_callAdapter(get_class(), __FUNCTION__);
+		
+		$view = self::_applyFilter(get_class(), __FUNCTION__, $view, array('event' => 'args'));
 		
 		$title = PVTemplate::getSiteTitle();
 		
 		if(empty($title))
-			PVTemplate::setTitleTitle( $view );
+			PVTemplate::setSiteTitle($view['view']. ' '. $view['prefix'] );
 		
 	}
 
@@ -166,9 +175,24 @@ Class Template extends PVStaticInstance {
 		require ($this -> tempate_path);
 	}
 	
+	/**
+	 * Returns the header to be placed at the top of a template. The header contains tags that will be replaced
+	 * at the end of output buffering with the site's title, meta descriptiong, keywords, and additional javascript
+	 * libraries. This method should be called between the <head></head> tags in your template file.
+	 * 
+	 * @return string $tags Returns a string of tags that will be placed at the top of the header
+	 * @access public
+	 */
 	public function header(){
+			
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__);
 		
-		return '{HEADER_ADDITION}';
+		$header_placeholders = '<title>{SITE_TITLE}</title>{HEADER_ADDITION}';
+		
+		$header_placeholders = self::_applyFilter(get_class(), __FUNCTION__, $header_placeholders , array('event' => 'return'));
+		
+		return $header_placeholders;
 		
 	}
 
