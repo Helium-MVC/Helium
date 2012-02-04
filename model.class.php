@@ -134,12 +134,10 @@ Abstract Class Model extends PVStaticInstance {
 
 				foreach ($rules as $key => $rule) {
 						
-					if(!isset($rule['event'])) {
-						$rule_defaults = $this -> _getValidationRuleDefaults();
-						$rule += $rule_defaults;
-					}
-
-					if ($this -> _checkValidationEvent($options['event'], $rule['event'])  && !PVValidator::check($key, @$data[$field])) {
+					
+					$rule += $this -> _getValidationRuleDefaults();
+					
+					if ($this -> _checkValidationEvent($options['event'], $rule['event'])  && !PVValidator::check($key, @$data[$field], $rule['options'])) {
 						$hasError = false;
 						$this -> _addValidationError($field, $rule['error']);
 					}
@@ -956,7 +954,8 @@ Abstract Class Model extends PVStaticInstance {
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 		
 		$defaults = array(
-			'event' => array('create', 'update')
+			'event' => array('create', 'update'),
+			'options' => array()
 		);
 		
 		$defaults = self::_applyFilter(get_class(), __FUNCTION__, $defaults , array('event' => 'return'));
