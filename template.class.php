@@ -146,7 +146,7 @@ Class Template extends PVStaticInstance {
 	protected function _titleCheck($view) {
 		
 		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__);
+			return self::_callAdapter(get_class(), __FUNCTION__, $view);
 		
 		$view = self::_applyFilter(get_class(), __FUNCTION__, $view, array('event' => 'args'));
 		
