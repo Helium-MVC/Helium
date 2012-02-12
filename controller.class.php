@@ -103,6 +103,3 @@ Abstract Class Controller extends PVStaticInstance {
 	abstract function index();
 	
 	}
-	
-
-?>

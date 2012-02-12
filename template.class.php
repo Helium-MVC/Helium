@@ -197,4 +197,3 @@ Class Template extends PVStaticInstance {
 	}
 
 }
-?>

@@ -15,4 +15,3 @@ Class Registry extends PVStaticInstance {
 	}
 
 }
-?>
