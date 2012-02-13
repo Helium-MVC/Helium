@@ -2,10 +2,12 @@
 
 Class Template extends PVStaticInstance {
 
-	private $registry;
-	private $request;
-	private $tempate_path;
-	private $vars = array();
+	protected $_registry;
+	protected $_request;
+	protected $_tempate_path;
+	protected $_vars = array();
+	protected $_view;
+	protected $_template;
 
 	/**
 	 * The constrcutor for the template.
@@ -23,8 +25,8 @@ Class Template extends PVStaticInstance {
 		$registry = $filtered['registry'];
 		$request = $filtered['request'];
 		
-		$this -> registry = $registry;
-		$this -> request = $request;
+		$this -> _registry = $registry;
+		$this -> _request = $request;
 
 		spl_autoload_register(array($this, 'templateExtensionLoader'));
 
@@ -66,16 +68,16 @@ Class Template extends PVStaticInstance {
 	}
 
 	public function __set($index, $value) {
-		$this -> vars[$index] = $value;
+		$this -> _vars[$index] = $value;
 	}
 
 	public function __get($index) {
-		if (!isset($this -> vars[$index])) {
+		if (!isset($this -> _vars[$index])) {
 			$class = new $index();
-			$this -> vars[$index] = $class;
+			$this -> _vars[$index] = $class;
 		}
 
-		return $this -> vars[$index];
+		return $this -> _vars[$index];
 	}
 
 	/**
@@ -104,13 +106,16 @@ Class Template extends PVStaticInstance {
 		$view = $filtered['view'];
 		$template = $filtered['template'];
 		
+		$this -> _view = $view;
+		$this -> _template =$template;
+		
 		$this -> _titleCheck($view);
 		
 		ob_start( array($this , '_displayContents' ) );
 
 		$path = SITE_PATH . '/views' . '/' . $view['view'] . '/' . $view['prefix'] . '.' . $view['type'] . '.' . $view['extension'];
 
-		$this -> tempate_path = $path;
+		$this -> _tempate_path = $path;
 		
 		if(!$template['disable'])
 			include (PV_TEMPLATES. $template['prefix'] . '.' . $template['type'] . '.' . $template['extension']);
@@ -168,11 +173,11 @@ Class Template extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 
-		foreach ($this->vars as $key => $value) {
+		foreach ($this->_vars as $key => $value) {
 			$$key = $value;
 		}
 
-		require ($this -> tempate_path);
+		require ($this -> _tempate_path);
 	}
 	
 	/**
