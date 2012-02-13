@@ -3,7 +3,7 @@
 Class Template extends PVStaticInstance {
 
 	protected $_registry;
-	protected $_request;
+	protected $request;
 	protected $_tempate_path;
 	protected $_vars = array();
 	protected $_view;
@@ -26,7 +26,7 @@ Class Template extends PVStaticInstance {
 		$request = $filtered['request'];
 		
 		$this -> _registry = $registry;
-		$this -> _request = $request;
+		$this -> request = $request;
 
 		spl_autoload_register(array($this, 'templateExtensionLoader'));
 
@@ -72,7 +72,7 @@ Class Template extends PVStaticInstance {
 	}
 
 	public function __get($index) {
-		if (!isset($this -> _vars[$index])) {
+		if (!isset($this -> _vars[$index]) && class_exists($index) ) {
 			$class = new $index();
 			$this -> _vars[$index] = $class;
 		}
