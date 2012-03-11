@@ -678,13 +678,15 @@ Abstract Class Model extends PVStaticInstance {
 
 		$error_name = self::_applyFilter(get_class(), __FUNCTION__, $error_name, array('event' => 'args'));
 		$error_name = self::_applyFilter(get_called_class(), __FUNCTION__, $error_name, array('event' => 'args'));
-
+		$output = '';
+		
 		if (isset($this -> registry -> errors[$error_name])) {
 			foreach ($this->registry->errors[$error_name] as $error) {
-				echo $error;
+				$output .= $error;
 			}//end foreach
 		}
-
+		
+		return $output;
 	}//endError
 	
 	
