@@ -3,7 +3,7 @@
 Abstract Class Model extends PVStaticInstance {
 
 	protected $registry;
-	protected $errors;
+	protected $_errors;
 	protected $_config = array(
 		'create_table' => true, 
 		'column_check' => true, 
@@ -126,7 +126,7 @@ Abstract Class Model extends PVStaticInstance {
 		$options = $filtered['options'];
 
 		$hasError = true;
-		$this -> errors = array();
+		$this -> _errors = array();
 
 		if (!empty($this -> _validators)) {
 
@@ -153,7 +153,7 @@ Abstract Class Model extends PVStaticInstance {
 			}
 		}
 
-		$this -> registry -> errors = $this -> errors;
+		$this -> registry -> errors = $this -> _errors;
 
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $hasError, $data);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $hasError, $data);
@@ -186,7 +186,7 @@ Abstract Class Model extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $options);
 		
-		$defaults = array('validate' => true, 'use_schema' => true, 'sync_data' => true, 'validate_options' => array('event' => 'create'));
+		$defaults = array('validate' => true, 'use_schema' => true, 'sync_data' => true, 'validate_options' => array('event' => 'create'), 'return_last_id' => true);
 		$options += $defaults;
 
 		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array('data' => $data, 'options' => $options), array('event' => 'args'));
@@ -241,7 +241,12 @@ Abstract Class Model extends PVStaticInstance {
 			}
 		
 			$options = $this -> _configureConnection($options);
-			$id = PVDatabase::preparedReturnLastInsert($table_name, $auto_incremented_field, $table_name, $input_data, array(), $options);
+			
+			if($options['return_last_id'] && !empty($auto_incremented_field))
+				$id = PVDatabase::preparedReturnLastInsert($table_name, $auto_incremented_field, $table_name, $input_data, array(), $options);
+			else {
+				PVDatabase::preparedInsert($table_name, $input_data);
+			}
 
 			if ($id) {
 				$conditions = array('conditions' => array($auto_incremented_field => $id));
@@ -352,25 +357,37 @@ Abstract Class Model extends PVStaticInstance {
 	 * @access public
 	 * @todo create a more complex delete
 	 */
-	public function delete($data, array $options = array()) {
-
+	public function delete($conditions, array $options = array()) {
+		
 		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $data);
+			return self::_callAdapter(get_class(), __FUNCTION__, $conditions, $options);
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $data);
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $conditions, $options);
 
-		$data = self::_applyFilter(get_class(), __FUNCTION__, $data, array('event' => 'args'));
-		$data = self::_applyFilter(get_called_class(), __FUNCTION__, $data, array('event' => 'args'));
-
-		$table_name = $this -> _formTableName(get_class($this));
-		$table_name = PVDatabase::formatTableName(strtolower($table_name));
+		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
+		$conditions = $filtered['conditions'];
+		$options = $filtered['options'];
+		
+		$conditions = self::_applyFilter(get_called_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
+		$conditions = $filtered['conditions'];
+		$options = $filtered['options'];
+		
+		$args = array(
+				'where' => isset($conditions['conditions']) ? $conditions['conditions'] : array(), 
+				'fields' => isset($conditions['fields']) ? $conditions['fields'] : array(), 
+				'table' => $this -> _formTableName(get_class($this)),
+				'limit' => isset($conditions['limit']) ? $conditions['limit'] : null,
+				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
+				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
+				
+		);
 
 		$options = $this -> _configureConnection($options);
-		$result = PVDatabase::preparedDelete($table_name, $data, array(), $options);
+		$result = PVDatabase::preparedDelete($args['table'], $args['where'], array(), $options);
 		
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $data);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $data);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
 
 		return $result;
 	}//end delete
@@ -680,8 +697,8 @@ Abstract Class Model extends PVStaticInstance {
 		$error_name = self::_applyFilter(get_called_class(), __FUNCTION__, $error_name, array('event' => 'args'));
 		$output = '';
 		
-		if (isset($this -> registry -> errors[$error_name])) {
-			foreach ($this->registry->errors[$error_name] as $error) {
+		if (isset($this -> _errors[$error_name])) {
+			foreach ($this-> _errors[$error_name] as $error) {
 				$output .= $error;
 			}//end foreach
 		}
@@ -689,6 +706,9 @@ Abstract Class Model extends PVStaticInstance {
 		return $output;
 	}//endError
 	
+	public function getVadilationErrors(){
+		return $this -> _errors;
+	}
 	
 	/**
 	 *  For models that connect tion a relational database, this method will create a join between tables. The
@@ -888,7 +908,7 @@ Abstract Class Model extends PVStaticInstance {
 		$field = $filtered['field'];
 		$error_message = $filtered['error_message'];
 		
-		$this -> errors[$field][] = PVTemplate::errorMessage($error_message);
+		$this -> _errors[$field][] = PVTemplate::errorMessage($error_message);
 		
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $field, $error_message);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $field, $error_message);
