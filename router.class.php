@@ -55,15 +55,20 @@ class Router extends PVStaticInstance {
 		}
 		$vars = $controller -> $action();
 		
-		$this -> parseControllerVars($vars);
+		if($vars instanceof Redirect) {
+			$vars -> executeRedirect();
+		} else {
 		
-		$template = $controller -> getTemplate();
-		$view = $controller -> getView();
-		
-		$view_defaults = array('view' => $this->controller, 'prefix' => $this->action);
-		$view  += $view_defaults;
-		
-		$this -> registry -> template -> show($view, $template);
+			$this -> parseControllerVars($vars);
+			
+			$template = $controller -> getTemplate();
+			$view = $controller -> getView();
+			
+			$view_defaults = array('view' => $this->controller, 'prefix' => $this->action);
+			$view  += $view_defaults;
+			
+			$this -> registry -> template -> show($view, $template);
+		}
 	}
 	
 	/**
@@ -108,4 +113,43 @@ class Router extends PVStaticInstance {
 		$this -> file = $this -> path . '/' . $this -> controller . 'Controller.php';
 	}
 
+}
+
+class Redirect extends PVStaticInstance {
+	
+	private $url = '';
+	
+	/**
+	 * Constructor for the redirect object
+	 * 
+	 * @param string $url The url to be redirected too
+	 * @param array $options An array of options for the redirection
+	 * 
+	 * @return void
+	 * @access public
+	 */
+	public function __construct($url, $options = array()) {
+		$this -> url = $url;
+	}
+	
+	/**
+	 * Gets the current url that has been set in the redirect
+	 * 
+	 * @return string $url The set url
+	 * @access public
+	 */
+	public function getUrl() {
+		return $url;
+	}
+	
+	/**
+	 * Executes the redirection request to be redirected to the appropiate url
+	 * 
+	 * @return void
+	 * @access public
+	 */
+	public function executeRedirect() {
+		header('Location: '.$this -> url);
+		echo PVResponse::createResponse(302);
+	}
 }
