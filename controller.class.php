@@ -1,6 +1,6 @@
 <?php
 
-Abstract Class Controller extends PVStaticInstance {
+Abstract class Controller extends PVStaticInstance {
 
 	protected $registry;
 	
@@ -16,7 +16,7 @@ Abstract Class Controller extends PVStaticInstance {
 	 * @return void
 	 * @access public
 	 */
-	public function __construct($registry) {
+	public function __construct($registry, $configurtion = array()) {
 		$this->registry = $registry;
 		
 		$default_view = array(
@@ -92,6 +92,23 @@ Abstract Class Controller extends PVStaticInstance {
 		$args += $this->_template;
 		$this->_template = $args;
 	}
+	
+	/**
+	 * Use for the redirecting to a new location. The redirect will not render the view and is faster placing a redirect
+	 * after the view has been rendered. Remember return this from the controller
+	 * 
+	 * @param string $url The url to be redirected too
+	 * @param array options
+	 * 
+	 * @return objected Redirect returns the redirect as an object
+	 * @access public
+	 */
+	public function redirect($url, $options = array()) {
+		$object = new Redirect($url, $options);
+		
+		return $object;
+	}
+	
 	
 	/**
 	 * The abstract function required by all classes that are extending the controller. At very least, the controller
