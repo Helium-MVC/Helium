@@ -246,6 +246,7 @@ Abstract Class Model extends PVStaticInstance {
 				$id = PVDatabase::preparedReturnLastInsert($table_name, $auto_incremented_field, $table_name, $input_data, array(), $options);
 			else {
 				PVDatabase::preparedInsert($table_name, $input_data);
+				$created = true;
 			}
 
 			if ($id) {
@@ -572,28 +573,46 @@ Abstract Class Model extends PVStaticInstance {
 
 		} else {
 			$this -> checkSchema();
-			
-			$args = array(
-				'where' => isset($conditions['conditions']) ? $conditions['conditions'] : array(), 
-				'fields' => isset($conditions['fields']) ? $conditions['fields'] : '*', 
-				'table' => PVDatabase::formatTableName(strtolower($this -> _formTableName(get_class($this)))),
-				'limit' => isset($conditions['limit']) ? $conditions['limit'] : null,
-				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
-				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
-				'join' => ''
-				
-			);
+
+			$table_name = $this -> _formTableName(get_class($this));
+			$table_name = PVDatabase::formatTableName(strtolower($table_name));
+			$input_data = array();
+			$query = 'SELECT * FROM ' . $table_name . ' ';
 
 			if (isset($conditions['join']) && isset($this -> _joins)) {
 				foreach ($conditions['join'] as $join) {
 
 					if (isset($this -> _joins[$join]))
-						$args['join'] .= $this -> _joinTable($this -> _joins[$join]) . ' ';
+						$query .= $this -> _joinTable($this -> _joins[$join]) . ' ';
 
 				}//end foreach
 			}
 
-			$result = PVDatabase::selectPreparedStatement($args);
+			$WHERE_CLAUSE = '';
+			$first = true;
+			$placeholder_count = 1;
+			if (isset($conditions['conditions'])) {
+				foreach ($conditions['conditions'] as $key => $condition) {
+					if (is_array($condition)) {
+
+					} else {
+						if ($first)
+							$WHERE_CLAUSE .= $key . '='.PVDatabase::getPreparedPlaceHolder($placeholder_count);
+						else
+							$WHERE_CLAUSE .= ' AND ' . $key . '='.PVDatabase::getPreparedPlaceHolder($placeholder_count);
+
+						$input_data[$key] = $condition;
+						$first = false;
+					}
+					$placeholder_count++;
+				}//end foreach
+
+				if (!empty($WHERE_CLAUSE)) {
+					$query .= 'WHERE ' . $WHERE_CLAUSE . ' ';
+				}
+			}
+			
+			$result = PVDatabase::preparedSelect($query, $input_data);
 			
 			if(PVDatabase::getDatabaseType() == 'postgresql') {
 				while($row = PVDatabase::fetchFields($result)){
