@@ -374,10 +374,14 @@ Abstract Class Model extends PVStaticInstance {
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 		
+		if (PVDatabase::getDatabaseType() != 'mongo') {
+			$this -> checkSchema();
+		}
+		
 		$args = array(
 				'where' => isset($conditions['conditions']) ? $conditions['conditions'] : array(), 
 				'fields' => isset($conditions['fields']) ? $conditions['fields'] : array(), 
-				'table' => $this -> _formTableName(get_class($this)),
+				'table' => PVDatabase::formatTableName($this -> _formTableName(get_class($this))),
 				'limit' => isset($conditions['limit']) ? $conditions['limit'] : null,
 				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
 				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
