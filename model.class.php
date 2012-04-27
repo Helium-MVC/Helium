@@ -578,7 +578,7 @@ Abstract Class Model extends PVStaticInstance {
 				}//end foreach
 			}
 
-			$conditions['join'] = $query;
+			$args['join'] = $query;
 			
 			$result = PVDatabase::selectPreparedStatement($args,$options);
 			
