@@ -97,7 +97,9 @@ class Router extends PVStaticInstance {
 	 */
 	private function getController() {
 
-		PVRouter::setRoute();
+		$rt = (isset($_GET['rt'])) ? '/'.$_GET['rt'] : null;
+		
+		PVRouter::setRoute($rt);
 		$route = PVRouter::getRoute();
 		$this -> controller = (empty($route['controller'])) ? PVRouter::getRouteVariable('controller') : $route['controller'];
 		$this -> action = (empty($route['action'])) ? PVRouter::getRouteVariable('action') : $route['action'];
