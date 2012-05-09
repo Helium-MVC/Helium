@@ -7,7 +7,8 @@ Abstract Class Model extends PVStaticInstance {
 	protected $_config = array(
 		'create_table' => true, 
 		'column_check' => true, 
-		'storage' => ''
+		'storage' => '',
+		'connection' => null
 		);
 
 	/**
@@ -530,6 +531,7 @@ Abstract Class Model extends PVStaticInstance {
 				'limit' => isset($conditions['limit']) ? $conditions['limit'] : null,
 				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
 				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
+				'group_by' => isset($conditions['group_by']) ? $conditions['group_by'] : null,
 				
 			);
 			
@@ -566,6 +568,7 @@ Abstract Class Model extends PVStaticInstance {
 				'limit' => isset($conditions['limit']) ? $conditions['limit'] : null,
 				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
 				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
+				'group_by' => isset($conditions['group_by']) ? $conditions['group_by'] : null,
 			);
 
 			$query = '';
@@ -995,6 +998,14 @@ Abstract Class Model extends PVStaticInstance {
 		$data = self::_applyFilter(get_called_class(), __FUNCTION__, $data , array('event' => 'return'));
 		
 		return $data;
+	}
+
+	protected function _setConnection() {
+		
+	}
+	
+	protected function _resetConnection() {
+		
 	}
 
 	private function convertToPVStandardSearchQuery($data) {
