@@ -82,6 +82,11 @@ class Router extends PVStaticInstance {
 	 */
 	private function parseControllerVars($vars) {
 		
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $vars);
+		
+		$vars = self::_applyFilter(get_class(), __FUNCTION__, $vars , array('event' => 'args'));
+		
 		if(is_array($vars)) {
 			foreach($vars as $key => $value) {
 				$this -> registry -> template -> $key = $value;
