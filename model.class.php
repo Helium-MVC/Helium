@@ -34,6 +34,15 @@ Abstract Class Model extends PVStaticInstance {
 			foreach($data as $key => $value)
 				$this -> addToCollectionWithName($key, $value);
 		}
+		
+		$default_config = array(
+			'create_table' => true, 
+			'column_check' => true, 
+			'storage' => '',
+			'connection' => null
+		);
+		
+		$this -> _config += $default_config;
 
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $data);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $data);
@@ -187,6 +196,8 @@ Abstract Class Model extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $options);
 		
+		$this -> _setConnection();
+		
 		$defaults = array('validate' => true, 'use_schema' => true, 'sync_data' => true, 'validate_options' => array('event' => 'create'), 'return_last_id' => true);
 		$options += $defaults;
 
@@ -260,6 +271,7 @@ Abstract Class Model extends PVStaticInstance {
 
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $created, $id, $data, $options);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $created, $id, $data, $options);
+		$this -> _resetConnection();
 
 		return $created;
 	}
@@ -285,6 +297,8 @@ Abstract Class Model extends PVStaticInstance {
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $conditions, $options);
+		
+		$this -> _setConnection();
 
 		$defaults = array('validate' => true, 'use_schema' => true, 'sync_data' => true, 'validate_options' => array('event' => 'update'));
 
@@ -346,6 +360,7 @@ Abstract Class Model extends PVStaticInstance {
 
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions, $options);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions, $options);
+		$this -> _resetConnection();
 
 		return $result;
 	}//end update
@@ -366,6 +381,8 @@ Abstract Class Model extends PVStaticInstance {
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $conditions, $options);
+		
+		$this -> _setConnection();
 
 		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
 		$conditions = $filtered['conditions'];
@@ -394,6 +411,8 @@ Abstract Class Model extends PVStaticInstance {
 		
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
+		
+		$this -> _resetConnection();
 
 		return $result;
 	}//end delete
@@ -411,9 +430,14 @@ Abstract Class Model extends PVStaticInstance {
 	 * @todo create a more complex searching method
 	 */
 	public function first($conditions = array(), $options = array()) {
+		
+		if (self::_hasAdapter(get_class(), __FUNCTION__))
+			return self::_callAdapter(get_class(), __FUNCTION__, $conditions, $options);
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $conditions);
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $conditions, $options);
+		
+		$this -> _setConnection();
 
 		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
 		$conditions = $filtered['conditions'];
@@ -483,6 +507,8 @@ Abstract Class Model extends PVStaticInstance {
 
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
+		
+		$this -> _resetConnection();
 	}
 
 	/**
@@ -507,9 +533,14 @@ Abstract Class Model extends PVStaticInstance {
 	 * @todo Write a function for recording results into the current model collection
 	 */
 	public function find($conditions = array(), array $options = array()) {
+		
+		if (self::_hasAdapter(get_class(), __FUNCTION__))
+			return self::_callAdapter(get_class(), __FUNCTION__, $conditions, $options);
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $conditions);
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $conditions, $options);
+		
+		$this -> _setConnection();
 
 		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
 		$conditions = $filtered['conditions'];
@@ -614,6 +645,8 @@ Abstract Class Model extends PVStaticInstance {
 		
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $conditions);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $conditions);
+		
+		$this -> _resetConnection();
 	}
 
 	/**
@@ -1000,11 +1033,50 @@ Abstract Class Model extends PVStaticInstance {
 		return $data;
 	}
 
+
+	/**
+	 * Sets the connection to the specified connection set in the configuration file if one is set. The connection must
+	 * also be specified in the the PVDatabase connection file.
+	 * 
+	 * @return void
+	 * @access protected
+	 */
 	protected function _setConnection() {
+		
+		if (self::_hasAdapter(get_class(), __FUNCTION__))
+			return self::_callAdapter(get_class(), __FUNCTION__);
+
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		
+		if($this ->_config['connection'] != null) {
+			$this -> _config['stored_connection'] = PVDatabase::getDatabaseLink();
+			$this -> _config['stored_connection_name'] = PVDatabase::getConnectionName();
+			PVDatabase::setDatabase($this ->_config['connection']);
+		}
+		
+		return null;
 		
 	}
 	
+	/**
+	 * Resets the connection the original connection before before the connection was changed
+	 * using _setConnection.
+	 * 
+	 * @return void
+	 * @access protected
+	 */
 	protected function _resetConnection() {
+		
+		if (self::_hasAdapter(get_class(), __FUNCTION__))
+			return self::_callAdapter(get_class(), __FUNCTION__);
+
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		
+		if($this ->_config['connection'] != null) {
+			PVDatabase::setDatabase($this -> _config['stored_connection_name']);
+		}
 		
 	}
 
