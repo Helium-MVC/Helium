@@ -55,9 +55,9 @@ Abstract Class Model extends PVStaticInstance {
 	 * should not be used with schema databases such as Mongo.
 	 * 
 	 * @return void
-	 * @access protected
+	 * @access public
 	 */
-	protected function checkSchema() {
+	public function checkSchema() {
 
 		if (self::_hasAdapter(get_class(), __FUNCTION__))
 			return self::_callAdapter(get_class(), __FUNCTION__);
@@ -92,11 +92,6 @@ Abstract Class Model extends PVStaticInstance {
 
 			foreach ($schema as $key => $value) {
 				if (!PVDatabase::columnExist($check_table_name, $key)) {
-					if (isset($value['default']) && empty($value['default']) && !($value['default'] === 0))
-						$value['default'] = '\'\'';
-					else if (isset($value['default']) && $value['type'] == 'string')
-						$value['default'] = '\'' . $value['default'] . '\'';
-
 					PVDatabase::addColumn($tablename, $key, $value);
 				}
 			}//end foreach
