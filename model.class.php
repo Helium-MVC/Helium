@@ -285,7 +285,7 @@ Abstract Class Model extends PVStaticInstance {
 	 * @return mixed $result Returns the result from the database
 	 * @access protected
 	 */
-	public function update($data, $conditions = array(), $options = array()) {
+	public function update(array $data = array(),array $conditions = array(), array $options = array()) {
 
 		if (self::_hasAdapter(get_class(), __FUNCTION__))
 			return self::_callAdapter(get_class(), __FUNCTION__, $data, $conditions, $options);
@@ -310,19 +310,19 @@ Abstract Class Model extends PVStaticInstance {
 
 		$result = false;
 		
+		$defaults = $this -> _getModelDefaults();
+		$data += $defaults;
+		
 		if (!$options['validate'] || $this -> validate($data, $options['validate_options'])) {
 			
 			$table_name = $this -> _formTableName(get_class($this));
 			$table_name = PVDatabase::formatTableName($table_name);
-			$defaults = $this -> _getModelDefaults();
-			
 			
 			$input_data = array();
 			$primary_key = '';
 			$wherelist = isset($conditions['conditions']) ? $conditions['conditions'] : array();
 			
 			if($options['use_schema']) {
-				$data += $defaults;
 				
 				foreach ($this->_schema as $field => $field_options) {
 					$field_options += $this -> _getFieldOptionsDefaults();
@@ -778,10 +778,10 @@ Abstract Class Model extends PVStaticInstance {
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 
 		$defaults = array();
-
+		
 		if (isset($this -> _schema)) {
 			foreach ($this->_schema as $key => $value) {
-				$defaults[$key] = (isset($this -> data -> $key)) ? $this -> data -> $key : @$value['default'];
+				$defaults[$key] = ($this ->  _collection -> $key) ? $this ->  _collection -> $key : @$value['default'];
 			}
 		}
 		
