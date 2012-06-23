@@ -214,8 +214,11 @@ Abstract Class Model extends PVStaticInstance {
 		if (!$options['validate'] || $this -> validate($data,$options['validate_options'])) {
 			$table_name = $this -> _formTableName(get_class($this));
 			$table_name = PVDatabase::formatTableName(strtolower($table_name));
-			$defaults = $this -> _getModelDefaults();
-			$data += $defaults;
+			
+			if($options['use_schema']) {
+				$defaults = $this -> _getModelDefaults();
+				$data += $defaults;
+			}
 
 			$input_data = array();
 			$primary_keys = array();
@@ -296,8 +299,8 @@ Abstract Class Model extends PVStaticInstance {
 		$this -> _setConnection();
 
 		$defaults = array('validate' => true, 'use_schema' => true, 'sync_data' => true, 'validate_options' => array('event' => 'update'));
-
 		$options += $defaults;
+		
 		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array('data' => $data, 'conditions' => $conditions, 'options' => $options), array('event' => 'args'));
 		$data = $filtered['data'];
 		$conditions = $filtered['conditions'];
@@ -310,8 +313,10 @@ Abstract Class Model extends PVStaticInstance {
 
 		$result = false;
 		
-		$defaults = $this -> _getModelDefaults();
-		$data += $defaults;
+		if($options['use_schema']) {
+			$defaults = $this -> _getModelDefaults();
+			$data += $defaults;
+		}
 		
 		if (!$options['validate'] || $this -> validate($data, $options['validate_options'])) {
 			
