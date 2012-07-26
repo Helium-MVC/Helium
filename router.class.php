@@ -36,6 +36,9 @@ class Router extends PVStaticInstance {
 	 */
 	public function loader() {
 		
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		
 		$this -> getController();
 
 		if (is_readable($this -> file) == false) {
@@ -69,6 +72,8 @@ class Router extends PVStaticInstance {
 			
 			$this -> registry -> template -> show($view, $template);
 		}
+		
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $class, $controller, $vars);
 	}
 	
 	/**
@@ -101,6 +106,9 @@ class Router extends PVStaticInstance {
 	 * @access private
 	 */
 	private function getController() {
+		
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__);
 
 		$rt = (isset($_GET['rt'])) ? '/'.$_GET['rt'] : null;
 		
@@ -118,6 +126,8 @@ class Router extends PVStaticInstance {
 		}
 		
 		$this -> file = $this -> path . '/' . $this -> controller . 'Controller.php';
+		
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $route, $rt);
 	}
 
 }
