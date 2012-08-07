@@ -111,7 +111,10 @@ Class Template extends PVStaticInstance {
 		
 		$this -> _titleCheck($view);
 		
-		ob_start( array($this , '_displayContents' ) );
+		if(!$template['disable'])
+			ob_start( array($this , '_displayContents' ) );
+		else
+			ob_start();
 
 		$path = SITE_PATH . '/views' . '/' . $view['view'] . '/' . $view['prefix'] . '.' . $view['type'] . '.' . $view['extension'];
 
