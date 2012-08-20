@@ -7,6 +7,8 @@ Abstract class Controller extends PVStaticInstance {
 	protected $_view = array();
 	
 	protected $_template = array();
+	
+	protected $request = null;
 
 	/**
 	 * Instantiates that controller object and creates the default parametets for the layout and the template
@@ -18,6 +20,8 @@ Abstract class Controller extends PVStaticInstance {
 	 */
 	public function __construct($registry, $configurtion = array()) {
 		$this->registry = $registry;
+		
+		$this -> request = new PVRequest();
 		
 		$default_view = array(
 			'type' => 'html',
