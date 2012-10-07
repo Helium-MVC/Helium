@@ -6,10 +6,13 @@ Abstract Class Model extends PVStaticInstance {
 	protected $_errors;
 	protected $_config = array(
 		'create_table' => true, 
-		'column_check' => true, 
+		'column_check' => true,
+		'table_name' => null, 
 		'storage' => '',
-		'connection' => null
-		);
+		'connection' => null,
+		'cache' => false,
+		'cache_method' => null
+	);
 
 	/**
 	 * The constructor for the model class. Can be used to assign default data to a model
@@ -126,7 +129,7 @@ Abstract Class Model extends PVStaticInstance {
 		$data = $filtered['data'];
 		$options = $filtered['options'];
 
-		$data = self::_applyFilter(get_called_class(), __FUNCTION__, array('data' => $data, 'options' => $options), array('event' => 'args'));
+		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array('data' => $data, 'options' => $options), array('event' => 'args'));
 		$data = $filtered['data'];
 		$options = $filtered['options'];
 
@@ -388,7 +391,7 @@ Abstract Class Model extends PVStaticInstance {
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 		
-		$conditions = self::_applyFilter(get_called_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
+		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 		
@@ -443,7 +446,7 @@ Abstract Class Model extends PVStaticInstance {
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 		
-		$conditions = self::_applyFilter(get_called_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
+		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 
@@ -546,7 +549,7 @@ Abstract Class Model extends PVStaticInstance {
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 		
-		$conditions = self::_applyFilter(get_called_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
+		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 		
@@ -563,6 +566,9 @@ Abstract Class Model extends PVStaticInstance {
 				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
 				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
 				'group_by' => isset($conditions['group_by']) ? $conditions['group_by'] : null,
+				'paginate' => isset($conditions['paginate']) ? $conditions['paginate'] : false,
+				'results_per_page' => isset($conditions['results_per_page']) ? $conditions['results_per_page'] : 20,
+				'current_page' => isset($conditions['current_page']) ? $conditions['current_page'] : 0,
 				
 			);
 			
@@ -600,6 +606,9 @@ Abstract Class Model extends PVStaticInstance {
 				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
 				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
 				'group_by' => isset($conditions['group_by']) ? $conditions['group_by'] : null,
+				'paginate' => isset($conditions['paginate']) ? $conditions['paginate'] : false,
+				'results_per_page' => isset($conditions['results_per_page']) ? $conditions['results_per_page'] : 20,
+				'current_page' => isset($conditions['current_page']) ? $conditions['current_page'] : 0,
 			);
 
 			$query = '';
@@ -613,6 +622,10 @@ Abstract Class Model extends PVStaticInstance {
 			}
 
 			$args['join'] = $query;
+			
+			if($args['paginate']) {
+				$this -> _getPaginationData($args['table'], $args['current_page'], $args['results_per_page'], $args['join']);
+			}
 			
 			$result = PVDatabase::selectPreparedStatement($args,$options);
 			
@@ -820,7 +833,9 @@ Abstract Class Model extends PVStaticInstance {
 
 	/**
 	 * Creates the table name for the database based upon the model name. Table name will be created by seperating capital
-	 * letters as seperate words and adding an '_' between them. The string will also be made to lower case.
+	 * letters as seperate words and adding an '_' between them. The string will also be made to lower case.. If a name
+	 * exist in the $_config['table_name'], then that table name will be used and the table name will not be formatted
+	 * to Helium standards.
 	 * 
 	 * @param string $name The name of the table to format the name of
 	 * 
@@ -834,6 +849,10 @@ Abstract Class Model extends PVStaticInstance {
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $name);
+		
+		if($this -> _config['table_name'] != null && !empty($this -> _config['table_name'])) {
+			return $this -> _config['table_name'];
+		}
 
 		$name = self::_applyFilter(get_class(), __FUNCTION__, $name, array('event' => 'args'));
 		$name = self::_applyFilter(get_called_class(), __FUNCTION__, $name, array('event' => 'args'));
@@ -1078,6 +1097,33 @@ Abstract Class Model extends PVStaticInstance {
 			PVDatabase::setDatabase($this -> _config['stored_connection_name']);
 		}
 		
+	}
+	
+	protected function _getPaginationData($current_page, $results_per_page, $joins ='') {
+		
+		PVDatabase::getPagininationOffset($table, $joins , $where_clause = '', $current_page, $results_per_page , $order_by = '');
+		
+	}
+	
+	protected function _writeCache($name, $data) {
+		
+	}
+	
+	protected function _readCache($name, $data) {
+		
+	}
+	
+	protected function _formatCacheName($args) {
+		
+		$name = '';
+		
+		if(is_array($args)) {
+				
+			foreach($args as $key => $value) {
+				
+				
+			}
+		}
 	}
 
 	private function convertToPVStandardSearchQuery($data) {
