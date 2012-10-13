@@ -850,7 +850,7 @@ Abstract Class Model extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $name);
 		
-		if($this -> _config['table_name'] != null && !empty($this -> _config['table_name'])) {
+		if(isset($this -> _config['table_name']) && $this -> _config['table_name'] != null && !empty($this -> _config['table_name'])) {
 			return $this -> _config['table_name'];
 		}
 
