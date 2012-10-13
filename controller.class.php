@@ -9,6 +9,8 @@ Abstract class Controller extends PVStaticInstance {
 	protected $_template = array();
 	
 	protected $request = null;
+	
+	protected $_extensions = array();
 
 	/**
 	 * Instantiates that controller object and creates the default parametets for the layout and the template
@@ -40,6 +42,39 @@ Abstract class Controller extends PVStaticInstance {
 		
 		$this->_view = $default_view;
 		$this->_template = $default_template;
+		
+		spl_autoload_register(array($this, 'controllerExtensionLoader'));
+	}
+	
+	public function __set($index, $value) {
+		$this -> _extensions[$index] = $value;
+	}
+
+	public function __get($index) {
+		if (!isset($this -> _extensions[$index]) && class_exists($index) ) {
+			$class = new $index();
+			$this -> _extensions[$index] = $class;
+		}
+
+		return $this -> _extensions[$index];
+	}
+	
+	/**
+	 * Auto loads classes in the extensions folder. Extensions autoloaded through this function
+	 * will only be available through controllers.
+	 * 
+	 */
+	public function controllerExtensionLoader($class) {
+		
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $class );
+		
+		$filename = $class . '.php';
+		$file = SITE_PATH . 'extensions' . DS . 'controllers' . DS . $filename;
+		if (!file_exists($file)) {
+			return false;
+		}
+		require_once $file;
 	}
 
 	protected function getModel($model_name){
