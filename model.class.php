@@ -748,24 +748,30 @@ Abstract Class Model extends PVStaticInstance {
 		$defaults = array('type' => 'natural', 'alias' => '', 'on' => '', 'format_table' => true);
 
 		$args += $defaults;
+		
+		$join = '';
+		
+		if(isset($args['using'])) {
+			$join .= $this -> _joinTable($this -> _joins[$args['using']]) . ' ';
+		}
 
 		$table = ($args['format_table']) ? PVDatabase::formatTableName(strtolower($args['table'])) : $args['table'];
 
 		switch(strtolower($args['type'])) :
 			case 'left' :
-				$join = 'LEFT JOIN';
+				$join .= 'LEFT JOIN';
 				break;
 			case 'right' :
-				$join = 'RIGHT JOIN';
+				$join .= 'RIGHT JOIN';
 				break;
 			case 'join' :
-				$join = 'JOIN';
+				$join .= 'JOIN';
 				break;
 			case 'full' :
-				$join = 'FULL JOIN';
+				$join .= 'FULL JOIN';
 				break;
 			default :
-				$join = 'NATURAL JOIN';
+				$join .= 'NATURAL JOIN';
 		endswitch;
 
 		$join .= ' ' . $table;
