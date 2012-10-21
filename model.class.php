@@ -263,9 +263,7 @@ Abstract Class Model extends PVStaticInstance {
 			}
 
 			if ($id) {
-				$conditions = array('conditions' => array($auto_incremented_field => $id));
 				
-				$this -> first($conditions);
 				$created = true;
 			}
 		}
@@ -273,7 +271,12 @@ Abstract Class Model extends PVStaticInstance {
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $created, $id, $data, $options);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $created, $id, $data, $options);
 		$this -> _resetConnection();
-
+		
+		if($created == true){
+			$conditions = array('conditions' => array($auto_incremented_field => $id));
+			$this -> first($conditions);
+		}
+		
 		return $created;
 	}
 
