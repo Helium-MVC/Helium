@@ -270,7 +270,7 @@ Abstract Class Model extends PVStaticInstance {
 		
 		$this -> _resetConnection();
 		
-		if($created == true){
+		if($created == true && $auto_incremented_field){
 			$conditions = array('conditions' => array($auto_incremented_field => $id));
 			$this -> first($conditions);
 		}
