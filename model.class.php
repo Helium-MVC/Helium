@@ -225,7 +225,7 @@ Abstract Class Model extends PVStaticInstance {
 
 			$input_data = array();
 			$primary_keys = array();
-			$auto_incremented_field = '';
+			$auto_incremented_field = null;
 			
 			if($options['validate']) {
 				foreach ($this->_schema as $field => $field_options) {
