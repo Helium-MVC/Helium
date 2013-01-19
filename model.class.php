@@ -57,10 +57,12 @@ Abstract Class Model extends PVStaticInstance {
 	 * the table and columns associated with that schema will be created. Will also new columns to the database. This method
 	 * should not be used with schema databases such as Mongo.
 	 * 
+	 * @param boolean force_check Will force a check even if the schema check is disabled in the config
+	 * 
 	 * @return void
 	 * @access public
 	 */
-	public function checkSchema() {
+	public function checkSchema($force_check = false) {
 
 		if (self::_hasAdapter(get_class(), __FUNCTION__))
 			return self::_callAdapter(get_class(), __FUNCTION__);
@@ -74,7 +76,7 @@ Abstract Class Model extends PVStaticInstance {
 		$check_table_name = (PVDatabase::getDatabaseType() == 'postgresql') ? PVDatabase::formatTableName(strtolower($table_name), false) : $tablename;
 		$schema = PVDatabase::getSchema(false);
 
-		if (!PVDatabase::tableExist($check_table_name, $schema) && isset($this -> _schema) && $this -> _config['create_table']) {
+		if ((!PVDatabase::tableExist($check_table_name, $schema) && isset($this -> _schema) && $this -> _config['create_table']) || $force_check = true) {
 			$primary_keys = '';
 			$first = 1;
 			$schema = $this -> _schema;
