@@ -76,7 +76,7 @@ Abstract Class Model extends PVStaticInstance {
 		$check_table_name = (PVDatabase::getDatabaseType() == 'postgresql') ? PVDatabase::formatTableName(strtolower($table_name), false) : $tablename;
 		$schema = PVDatabase::getSchema(false);
 
-		if ((!PVDatabase::tableExist($check_table_name, $schema) && isset($this -> _schema) && $this -> _config['create_table']) || $force_check = true) {
+		if (($this -> _config['create_table'] && !PVDatabase::tableExist($check_table_name, $schema) && isset($this -> _schema)) || ($force_check == true && !PVDatabase::tableExist($check_table_name, $schema))) {
 			$primary_keys = '';
 			$first = 1;
 			$schema = $this -> _schema;
@@ -92,7 +92,7 @@ Abstract Class Model extends PVStaticInstance {
 
 			$options = array('primary_key' => $primary_keys);
 			PVDatabase::createTable($tablename, $schema, $options);
-		} else if (isset($this -> _schema) && $this -> _config['column_check']) {
+		} else if (($this -> _config['column_check'] && isset($this -> _schema)) || $force_check == true ) {
 			$schema = $this -> _schema;
 
 			foreach ($schema as $key => $value) {
