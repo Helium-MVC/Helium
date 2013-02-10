@@ -362,14 +362,17 @@ Abstract Class Model extends PVStaticInstance {
 			$options = $this -> _configureConnection($options);
 			$result = PVDatabase::preparedUpdate($table_name, $input_data, $wherelist, array(), array(), $options);
 			$this -> addToCollection($input_data);
-
-			if ($options['sync_data'])
-				$this -> sync();
 		}
 
+		$this -> _resetConnection();
+		
+		
+		if ($result && $options['sync_data']){
+				$this -> sync();
+		}
+		
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions, $options);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions, $options);
-		$this -> _resetConnection();
 
 		return $result;
 	}//end update
@@ -418,10 +421,10 @@ Abstract Class Model extends PVStaticInstance {
 		$options = $this -> _configureConnection($options);
 		$result = PVDatabase::preparedDelete($args['table'], $args['where'], array(), $options);
 		
+		$this -> _resetConnection();
+		
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
-		
-		$this -> _resetConnection();
 
 		return $result;
 	}//end delete
@@ -514,10 +517,10 @@ Abstract Class Model extends PVStaticInstance {
 			}
 		}
 
+		$this -> _resetConnection();
+		
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
-		
-		$this -> _resetConnection();
 	}
 
 	/**
@@ -662,10 +665,10 @@ Abstract Class Model extends PVStaticInstance {
 			}
 		}
 		
+		$this -> _resetConnection();
+		
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $conditions);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $conditions);
-		
-		$this -> _resetConnection();
 	}
 
 	/**
