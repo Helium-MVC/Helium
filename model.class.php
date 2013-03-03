@@ -88,6 +88,10 @@ Abstract Class Model extends PVStaticInstance {
 				} else if (isset($value['default']) && empty($value['default']) && !($value['default'] === 0)) {
 					$schema[$key]['default'] = '\'\'';
 				}
+				
+				if(($value['type'] == 'uuid' || $value['type'] == 'guid') && isset($value['auto_increment']) && $value['auto_increment'] == true) {
+					unset($schema[$key]['auto_increment']);
+				}
 			}//endforeach
 
 			$options = array('primary_key' => $primary_keys);
@@ -239,7 +243,11 @@ Abstract Class Model extends PVStaticInstance {
 						unset($input_data[$field]);
 					}
 					
-				 	if ($field_options['primary_key'] == true && !$field_options['auto_increment']) {
+					if ($field_options['auto_generated'] == true) {
+						unset($input_data[$field]);
+					}
+					
+				 	if ($field_options['primary_key'] == true && !$field_options['auto_increment'] && !$field_options['auto_generated']) {
 						$primary_keys[$field] = $input_data[$field];
 					}
 					
@@ -733,8 +741,34 @@ Abstract Class Model extends PVStaticInstance {
 		return $output;
 	}//endError
 	
+	/**
+	 * Returns all the validation errors associated with the model.
+	 * 
+	 * @return array
+	 */
 	public function getVadilationErrors(){
 		return $this -> _errors;
+	}
+	
+	/**
+	 * Returns the name of the table associated with the model along with the schema if any. The table
+	 * name is normaly derived from the class name of the model, but the table name can also be explicilty
+	 * set in the config.
+	 * 
+	 * @param boolean $use_schema If true, will attach schema to the table name
+	 * 
+	 * @return string
+	 * @access public
+	 */
+	public function getTableName($use_schema = true) {
+		
+		$table_name = $this -> _formTableName(get_class($this));
+		
+		if($use_schema) {
+			$table_name = PVDatabase::formatTableName($table_name);
+		}
+		
+		return $table_name;
 	}
 	
 	/**
@@ -764,7 +798,12 @@ Abstract Class Model extends PVStaticInstance {
 			$join .= $this -> _joinTable($this -> _joins[$args['using']]) . ' ';
 		}
 
-		$table = ($args['format_table']) ? PVDatabase::formatTableName(strtolower($args['table'])) : $args['table'];
+		if(isset($args['model'])){
+			$model = new $args['model']();
+			$table = $model -> getTableName();
+		} else {
+			$table = ($args['format_table']) ? PVDatabase::formatTableName(strtolower($args['table'])) : $args['table'];
+		}
 
 		switch(strtolower($args['type'])) :
 			case 'left' :
@@ -838,7 +877,7 @@ Abstract Class Model extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 
-		$defaults = array('primary_key' => false, 'unique' => false, 'type' => 'string', 'auto_increment' => false, 'default' => '');
+		$defaults = array('primary_key' => false, 'unique' => false, 'type' => 'string', 'auto_increment' => false, 'default' => '', 'auto_generated' => false);
 		
 		$defaults = self::_applyFilter(get_class(), __FUNCTION__, $defaults , array('event' => 'return'));
 		$defaults = self::_applyFilter(get_called_class(), __FUNCTION__, $defaults , array('event' => 'return'));
