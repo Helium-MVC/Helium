@@ -445,6 +445,11 @@ Abstract Class Model extends PVStaticInstance {
 	 * 		-'conditions' _array_:The conditions used finding a value. The array key => value return into column = 'value'
 	 * 		-'join' _array_: Used the joins specefied in the child model in the '$_joins; variable
 	 * 
+	 * @param array $options Options that can change how the model reacts
+	 * 		-'cache' _string_ : Cache the models results and served cached data
+	 * 		-'cache_expire' _int_: Th number of seconds the cache should last
+	 * 		-'results' _string_: Defines if the results should be an STD object or in the model. Default is object, other value is 'model'
+	 * 
 	 * @return void Return values are placed in the instance and are accessible through the instance
 	 * @access public
 	 * @todo create a more complex searching method
@@ -466,13 +471,36 @@ Abstract Class Model extends PVStaticInstance {
 		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array('conditions' => $conditions, 'options' => $options), array('event' => 'args'));
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
+		
+		$defaults = array('cache' => false, 'cache_expire' => 300);
+		$options += $defaults;
+		
+		$args = $this -> _formatConditions($conditions, true);
+		
+		$cache_name = null;
+		$has_cache = false;
+		$result = null;
+		$result_set = null;
+		
+		if($options['cache']) {
+			$cache_name = $this -> _createCacheKey($args);
+			
+			if(!$this -> _checkCache($cache_name)) {
+				$has_cache = true;
+				$result = $this -> _readCache($cache_name);
+				
+				foreach ($result as $key => $value) {
+					$this -> addToCollectionWithName($key, $value);
+				}
+			}
+		}
+		
+		if($options['cache']) {
+			$result_set = array();	
+		}
 
-		if (PVDatabase::getDatabaseType() == 'mongo') {
+		if (PVDatabase::getDatabaseType() == 'mongo' && !$has_cache ) {
 
-			$conditions = isset($conditions['conditions']) ? $conditions['conditions'] : array();
-			$fields = isset($conditions['fields']) ? $conditions['fields'] : array();
-
-			$args = array('where' => $conditions, 'fields' => $fields, 'table' => $this -> _formTableName(get_class($this)));
 			$options['findOne'] = true;
 			$options = $this -> _configureConnection($options);
 			
@@ -480,29 +508,28 @@ Abstract Class Model extends PVStaticInstance {
 			
 			if ($result) {
 				foreach ($result as $key => $value) {
-					
-					if (!PVValidator::isInteger($key))
+
+					if (!PVValidator::isInteger($key)){
 						$this -> addToCollectionWithName($key, $value);
+						
+						if($options['cache']) {
+							$result_set[$key] = $value;	
+						}
+					}
 				}
 			}//end if result
-			
+
 			if(isset($options['gridFS']) && method_exists($result, 'getBytes'))
 				$this -> addToCollectionWithName('getBytes', $result -> getBytes());
+				
+				if($options['cache']) {
+					$result_set['getBytes'] = $result -> getBytes();	
+				}
 			
-		} else {
+		} else if(!$has_cache) {
 
 			$this -> checkSchema();
 			
-			$args = array(
-				'where' => isset($conditions['conditions']) ? $conditions['conditions'] : array(), 
-				'fields' => isset($conditions['fields']) ? $conditions['fields'] : '*', 
-				'table' => PVDatabase::formatTableName(strtolower($this -> _formTableName(get_class($this)))),
-				'limit' => isset($conditions['limit']) ? $conditions['limit'] : 1,
-				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
-				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
-				
-			);
-
 			$query ='';
 			if (isset($conditions['join']) && isset($this -> _joins)) {
 				foreach ($conditions['join'] as $join) {
@@ -513,16 +540,24 @@ Abstract Class Model extends PVStaticInstance {
 				}//end foreach
 			}
 			$args['join'] = $query;
-			
 			$result = PVDatabase::selectPreparedStatement($args,$options);
 			$row = PVDatabase::fetchArray($result);
 			
 			if(!empty($row)) {
 				foreach ($row as $key => $value) {
-					if (!PVValidator::isInteger($key))
+					if (!PVValidator::isInteger($key)){
 						$this -> addToCollectionWithName($key, $value);
-				}
-			}
+						
+						if($options['cache']) {
+							$result_set[$key] = $value;	
+						}
+					}
+				}//end foreach
+			}//end ifnoty emptty
+		}
+		
+		if($options['cache'] && !$has_cache) {
+			$this -> _writeCache($cache_name, $result_set, $options);
 		}
 
 		$this -> _resetConnection();
@@ -546,6 +581,8 @@ Abstract Class Model extends PVStaticInstance {
 	 * @param array $options Options can be used to customize the finding of data
 	 * 			-'results' _mixed_: How the results will be returned. Default option is 'object', in wich the results will be stored in an
 	 * 			stdObject. The other option is 'model', in which the results will be stored in a new instance of the current model
+	 * 			-'cache' _string_ : Cache the models results and served cached data
+	 * 			-'cache_expire' _int_: Th number of seconds the cache should last
 	 * 
 	 * @return void Return results are added as part of the model
 	 * @access public
@@ -570,64 +607,31 @@ Abstract Class Model extends PVStaticInstance {
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 		
-		$defaults = array('results' => 'object');
+		$defaults = array('results' => 'object', 'cache' => false, 'cache_expire' => 300);
 		$options += $defaults;
 		
-		if (PVDatabase::getDatabaseType() == 'mongo') {
+		$args = $this -> _formatConditions($conditions);
+		
+		$has_cache = false;
+		
+		$cache_name = null;
+		
+		if($options['cache']) {
+			$cache_name = $this -> _createCacheKey($args);
 			
-			$args = array(
-				'where' => isset($conditions['conditions']) ? $conditions['conditions'] : array(), 
-				'fields' => isset($conditions['fields']) ? $conditions['fields'] : array(), 
-				'table' => $this -> _formTableName(get_class($this)),
-				'limit' => isset($conditions['limit']) ? $conditions['limit'] : null,
-				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
-				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
-				'group_by' => isset($conditions['group_by']) ? $conditions['group_by'] : null,
-				'paginate' => isset($conditions['paginate']) ? $conditions['paginate'] : false,
-				'results_per_page' => isset($conditions['results_per_page']) ? $conditions['results_per_page'] : 20,
-				'current_page' => isset($conditions['current_page']) ? $conditions['current_page'] : 0,
-				
-			);
+			if(!$this -> _checkCache($cache_name)) {
+				$has_cache = true;
+				$result = $this -> _readCache($cache_name);
+			}
+		}
+		
+		if (PVDatabase::getDatabaseType() == 'mongo' && !$has_cache) {
 			
 			$options = $this -> _configureConnection($options);
 			$result = PVDatabase::selectStatement($args, $options);
 
-			foreach ($result as $row) {
-				
-				if(isset($options['gridFS'])){
-						
-					$bytes = 0;
-					if(method_exists($row, 'getBytes'))
-						$bytes = $row -> getBytes();
-					
-					$row = array('file' => $row-> file);
-					$row['getBytes'] = $bytes;
-				}
-				
-				if($options['results'] == 'model') {
-					$class= get_called_class();
-					$row = new $class($row);
-				} 
-				
-				$this -> addToCollection($row);
-			}
-
-		} else {
+		} else if(!$has_cache) {
 			$this -> checkSchema();
-
-			$args = array(
-				'where' => isset($conditions['conditions']) ? $conditions['conditions'] : array(), 
-				'fields' => isset($conditions['fields']) ? $conditions['fields'] : '*', 
-				'table' => PVDatabase::formatTableName($this -> _formTableName(get_class($this))),
-				'limit' => isset($conditions['limit']) ? $conditions['limit'] : null,
-				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
-				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
-				'group_by' => isset($conditions['group_by']) ? $conditions['group_by'] : null,
-				'paginate' => isset($conditions['paginate']) ? $conditions['paginate'] : false,
-				'results_per_page' => isset($conditions['results_per_page']) ? $conditions['results_per_page'] : 20,
-				'current_page' => isset($conditions['current_page']) ? $conditions['current_page'] : 0,
-			);
-
 			$query = '';
 			if (isset($conditions['join']) && isset($this -> _joins)) {
 				foreach ($conditions['join'] as $join) {
@@ -645,33 +649,9 @@ Abstract Class Model extends PVStaticInstance {
 			}
 			
 			$result = PVDatabase::selectPreparedStatement($args,$options);
-			
-			if(PVDatabase::getDatabaseType() == 'postgresql') {
-				while($row = PVDatabase::fetchFields($result)){
-						
-					if($options['results'] == 'model') {
-						$class= get_called_class();
-						$row = new $class($row);
-					}
-					
-					$this -> addToCollection($row);
-				}
-			} else {
-				$rows = PVDatabase::fetchFields($result);
-				
-				if(!empty($rows)) {
-					foreach ($rows as $row) {
-					
-						if($options['results'] == 'model') {
-							$class= get_called_class();
-							$row = new $class($row);
-						}
-			 
-						$this -> addToCollection($row);
-					}
-				}
-			}
 		}
+
+		$this -> _processResults($result, $options, $cache_name);
 		
 		$this -> _resetConnection();
 		
@@ -745,8 +725,18 @@ Abstract Class Model extends PVStaticInstance {
 	 * Returns all the validation errors associated with the model.
 	 * 
 	 * @return array
+	 * @deprecated since 1.82
 	 */
 	public function getVadilationErrors(){
+		return $this -> _errors;
+	}
+	
+	/**
+	 * Returns all the validation errors associated with the model.
+	 * 
+	 * @return array
+	 */
+	public function getValidationErrors(){
 		return $this -> _errors;
 	}
 	
@@ -1065,6 +1055,158 @@ Abstract Class Model extends PVStaticInstance {
 	}
 	
 	/**
+	 * Adds the defaults to the the conditions for a query to be called.
+	 * 
+	 * @param array $conditions The conditions passed into the model
+	 * @param boolean $single If the results should only return on value, the first one
+	 * 
+	 * @return array Returns the conditions complete
+	 * @access protected
+	 */
+	protected function _formatConditions($conditions = array(), $single = false) {
+		
+		if (PVDatabase::getDatabaseType() == 'mongo') {
+			
+			$args = array(
+				'where' => isset($conditions['conditions']) ? $conditions['conditions'] : array(), 
+				'fields' => isset($conditions['fields']) ? $conditions['fields'] : array(), 
+				'table' => $this -> _formTableName(get_class($this)),
+				'limit' => isset($conditions['limit']) ? $conditions['limit'] : null,
+				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
+				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
+				'group_by' => isset($conditions['group_by']) ? $conditions['group_by'] : null,
+				'paginate' => isset($conditions['paginate']) ? $conditions['paginate'] : false,
+				'results_per_page' => isset($conditions['results_per_page']) ? $conditions['results_per_page'] : 20,
+				'current_page' => isset($conditions['current_page']) ? $conditions['current_page'] : 0,
+				
+			);
+			
+			if($single){
+				$args['findOne'] = true;
+			}
+		
+		} else {
+			
+			$args = array(
+				'where' => isset($conditions['conditions']) ? $conditions['conditions'] : array(), 
+				'fields' => isset($conditions['fields']) ? $conditions['fields'] : '*', 
+				'table' => PVDatabase::formatTableName($this -> _formTableName(get_class($this))),
+				'limit' => isset($conditions['limit']) ? $conditions['limit'] : null,
+				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
+				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
+				'group_by' => isset($conditions['group_by']) ? $conditions['group_by'] : null,
+				'paginate' => isset($conditions['paginate']) ? $conditions['paginate'] : false,
+				'results_per_page' => isset($conditions['results_per_page']) ? $conditions['results_per_page'] : 20,
+				'current_page' => isset($conditions['current_page']) ? $conditions['current_page'] : 0,
+			);
+			
+			if($single){
+				$args['limit'] = 1;
+			}
+			
+		}
+		
+		return $args;
+		
+	}
+
+	/**
+	 * Processes the results from a find method by assigning the results to the collection of
+	 * the model
+	 * 
+	 * @param object $result The results from a database call or cache
+	 * @param array $options Options that are used to determine how results are aggregated
+	 * 							-'results' - Default is array, but can either be set to model for casting result sinto a model
+	 * 							-'gridFS' 
+	 * @param string $cache_name The name of the cache key, if any
+	 * 
+	 * @return void
+	 * @access protected
+	 */
+	protected function _processResults($result, $options, $cache_name = null) {
+		
+		if($cache_name != null && !$this ->_checkCache($cache_name)) {
+			
+			foreach ($result as $row) {
+				$this -> addToCollection($row);
+			}
+			
+			return true;
+		}
+		
+		if($options['cache'] == true) {
+			$result_set = array();
+		}
+		
+		if (PVDatabase::getDatabaseType() == 'mongo') {
+			
+			foreach ($result as $row) {
+
+				if(isset($options['gridFS'])){
+
+					$bytes = 0;
+					if(method_exists($row, 'getBytes'))
+						$bytes = $row -> getBytes();
+
+					$row = array('file' => $row-> file);
+					$row['getBytes'] = $bytes;
+				}
+
+				if($options['results'] == 'model') {
+					$class= get_called_class();
+					$row = new $class($row);
+				} 
+				
+				if($options['cache'] == true) {
+					$result_set[] = $row;
+				}
+				
+				$this -> addToCollection($row);
+			}
+		} else {
+			
+			if(PVDatabase::getDatabaseType() == 'postgresql') {
+				while($row = PVDatabase::fetchFields($result)){
+						
+					if($options['results'] == 'model') {
+						$class= get_called_class();
+						$row = new $class($row);
+					}
+					
+					if($options['cache'] == true) {
+						$result_set[] = $row;
+					}
+					
+					$this -> addToCollection($row);
+				}
+			} else {
+				$rows = PVDatabase::fetchFields($result);
+				
+				if(!empty($rows)) {
+					foreach ($rows as $row) {
+					
+						if($options['results'] == 'model') {
+							$class= get_called_class();
+							$row = new $class($row);
+						}
+						
+						if($options['cache'] == true) {
+							$result_set[] = $row;
+						}
+			 
+						$this -> addToCollection($row);
+					}
+				}
+			}//end if not mongo
+			
+		}//end else if
+		
+		if($options['cache'] == true) {
+			$this -> _writeCache($cache_name, $result_set, $options);
+		}
+	}//end proccess results
+	
+	/**
 	 * Cast data to a certain type. The cast option should be set in the schema in the model.
 	 * 
 	 * @param mixed $data The data to be casted to a different type
@@ -1152,21 +1294,70 @@ Abstract Class Model extends PVStaticInstance {
 		}
 		
 	}
-	
+	/**
+	 * 
+	 */
 	protected function _getPaginationData($current_page, $results_per_page, $joins ='') {
 		
 		PVDatabase::getPagininationOffset($table, $joins , $where_clause = '', $current_page, $results_per_page , $order_by = '');
 		
 	}
 	
-	protected function _writeCache($name, $data) {
-		
+	/**
+	 * Writes data out to cache. Cache should be replated to this model
+	 * 
+	 * @param string $name The key to reference the cache
+	 * @param mixed $data The data to be stored in the key
+	 * 
+	 * @return boolean 
+	 * @access protected
+	 */
+	protected function _writeCache($name, $data, $options) {
+		return PVCache::writeCache($name, $data, $options);
 	}
 	
-	protected function _readCache($name, $data) {
-		
+	/**
+	 * Reads a cache that is related to this model
+	 * 
+	 * @param string $name The key to reference the cached file
+	 * 
+	 * @return mixed
+	 * @access protected
+	 */
+	protected function _readCache($name) {
+		return PVCache::readCache($name);
 	}
 	
+	/**
+	 * Checking if cache exist hasExpired or exist
+	 * 
+	 * @param string $name The key to reference the cache value
+	 * 
+	 * @return boolean. Returns true if the cache has expired or not exist, otherwise false
+	 * @access protected
+	 */
+	protected function _checkCache($name) {
+		return PVCache::hasExpired($name);
+	}
+	
+	/**
+	 * Creates a unique key for each query for the cache. The key is based upon the
+	 * query conditions
+	 * 
+	 * @param array $conditiions An array of sql conditions that define the query
+	 * 
+	 * @return string A unique string
+	 * @access protected
+	 */
+	protected function _createCacheKey($conditions = array()) {
+		$conditions = serialize ( $conditions );
+		
+		return md5($conditions);
+	}
+	
+	/**
+	 * @deprectated
+	 */
 	protected function _formatCacheName($args) {
 		
 		$name = '';
