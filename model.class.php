@@ -1,6 +1,6 @@
 <?php
 
-Abstract Class Model extends PVStaticInstance {
+Abstract Class He2Model extends PVStaticInstance {
 
 	protected $registry;
 	protected $_errors;
@@ -215,6 +215,7 @@ Abstract Class Model extends PVStaticInstance {
 
 		$created = false;
 		$id = 0;
+		$primary_keys = array();
 
 		if (PVDatabase::getDatabaseType() != 'mongo') {
 			$this -> checkSchema();
@@ -230,7 +231,6 @@ Abstract Class Model extends PVStaticInstance {
 			}
 
 			$input_data = array();
-			$primary_keys = array();
 			$auto_incremented_field = null;
 			
 			if($options['validate']) {
@@ -282,6 +282,9 @@ Abstract Class Model extends PVStaticInstance {
 		
 		if($created == true && $auto_incremented_field){
 			$conditions = array('conditions' => array($auto_incremented_field => $id));
+			$this -> first($conditions);
+		} else if(!empty($primary_keys)) {
+			$conditions = array('conditions' => $primary_keys);
 			$this -> first($conditions);
 		}
 		
@@ -843,7 +846,7 @@ Abstract Class Model extends PVStaticInstance {
 		
 		if (isset($this -> _schema)) {
 			foreach ($this->_schema as $key => $value) {
-				$defaults[$key] = ($this ->  _collection -> $key) ? $this ->  _collection -> $key : @$value['default'];
+				$defaults[$key] = (@$this ->  _collection -> $key) ? $this ->  _collection -> $key : @$value['default'];
 			}
 		}
 		
