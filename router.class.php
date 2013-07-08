@@ -1,6 +1,6 @@
 <?php
 
-class Router extends PVStaticInstance {
+class He2Router extends PVStaticInstance {
 	
 	private $registry;
 
