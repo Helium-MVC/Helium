@@ -1,6 +1,6 @@
 <?php
 
-Class Template extends PVStaticInstance {
+Class He2Template extends PVStaticInstance {
 
 	protected $_registry;
 	protected $request;
