@@ -1,6 +1,6 @@
 <?php
 
-Abstract class Controller extends PVStaticInstance {
+Abstract class He2Controller extends PVStaticInstance {
 
 	protected $registry;
 	
