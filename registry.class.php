@@ -1,6 +1,6 @@
 <?php
 
-Class Registry extends PVStaticInstance {
+Class He2Registry extends PVStaticInstance {
 
 	private $vars = array();
 
