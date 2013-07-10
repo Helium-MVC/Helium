@@ -351,8 +351,9 @@ Abstract Class He2Model extends PVStaticInstance {
 				
 				foreach ($this->_schema as $field => $field_options) {
 					$field_options += $this -> _getFieldOptionsDefaults();
-	
-					if ((!isset($field_options['null']) || (isset($field_options['null']) && !$field_options['null'])) || !empty($data[$field])) {
+					
+					if (!$field_options['exclude'] && (!isset($field_options['null']) || (isset($field_options['null']) && !$field_options['null'])) || !empty($data[$field])) {
+						
 						if ($field_options['primary_key']) {
 							$primary_key = $field;
 							$wherelist[$field] = (!empty($this -> _collection -> $field)) ? $field_options['default'] : $this -> _collection -> $field;
@@ -870,7 +871,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 
-		$defaults = array('primary_key' => false, 'unique' => false, 'type' => 'string', 'auto_increment' => false, 'default' => '', 'auto_generated' => false);
+		$defaults = array('primary_key' => false, 'unique' => false, 'type' => 'string', 'auto_increment' => false, 'default' => '', 'auto_generated' => false, 'exclude' => false);
 		
 		$defaults = self::_applyFilter(get_class(), __FUNCTION__, $defaults , array('event' => 'return'));
 		$defaults = self::_applyFilter(get_called_class(), __FUNCTION__, $defaults , array('event' => 'return'));
