@@ -69,11 +69,10 @@ Abstract Class He2Model extends PVStaticInstance {
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
-
-		$table_name = $this -> _formTableName(get_class($this));
-		$tablename = PVDatabase::formatTableName(strtolower($table_name));
 		
-		$check_table_name = (PVDatabase::getDatabaseType() == 'postgresql') ? PVDatabase::formatTableName(strtolower($table_name), false) : $tablename;
+		$tablename = $this -> getTableName();
+		
+		$check_table_name = (PVDatabase::getDatabaseType() == 'postgresql') ? $this -> getTableName(false) : $tablename;
 		$schema = PVDatabase::getSchema(false);
 
 		if (($this -> _config['create_table'] && !PVDatabase::tableExist($check_table_name, $schema) && isset($this -> _schema)) || ($force_check == true && !PVDatabase::tableExist($check_table_name, $schema))) {
@@ -351,9 +350,8 @@ Abstract Class He2Model extends PVStaticInstance {
 				
 				foreach ($this->_schema as $field => $field_options) {
 					$field_options += $this -> _getFieldOptionsDefaults();
-					
-					if (!$field_options['exclude'] && (!isset($field_options['null']) || (isset($field_options['null']) && !$field_options['null'])) || !empty($data[$field])) {
-						
+	
+					if ((!isset($field_options['null']) || (isset($field_options['null']) && !$field_options['null'])) || !empty($data[$field])) {
 						if ($field_options['primary_key']) {
 							$primary_key = $field;
 							$wherelist[$field] = (!empty($this -> _collection -> $field)) ? $field_options['default'] : $this -> _collection -> $field;
@@ -756,7 +754,7 @@ Abstract Class He2Model extends PVStaticInstance {
 	 */
 	public function getTableName($use_schema = true) {
 		
-		$table_name = $this -> _formTableName(get_class($this));
+		$table_name = ($this -> _config['table_name']) ?: $this -> _formTableName(get_class($this));
 		
 		if($use_schema) {
 			$table_name = PVDatabase::formatTableName($table_name);
@@ -871,7 +869,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 
-		$defaults = array('primary_key' => false, 'unique' => false, 'type' => 'string', 'auto_increment' => false, 'default' => '', 'auto_generated' => false, 'exclude' => false);
+		$defaults = array('primary_key' => false, 'unique' => false, 'type' => 'string', 'auto_increment' => false, 'default' => '', 'auto_generated' => false);
 		
 		$defaults = self::_applyFilter(get_class(), __FUNCTION__, $defaults , array('event' => 'return'));
 		$defaults = self::_applyFilter(get_called_class(), __FUNCTION__, $defaults , array('event' => 'return'));
