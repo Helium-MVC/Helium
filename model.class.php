@@ -235,26 +235,28 @@ Abstract Class He2Model extends PVStaticInstance {
 			if($options['validate']) {
 				foreach ($this->_schema as $field => $field_options) {
 					$field_options += $this -> _getFieldOptionsDefaults();
-					$input_data[$field] = (empty($data[$field])) ? $field_options['default'] : $data[$field];
-	
-					if ($field_options['auto_increment'] == true) {
-						$auto_incremented_field = $field;
-						unset($input_data[$field]);
-					}
-					
-					if ($field_options['auto_generated'] == true) {
-						unset($input_data[$field]);
-					}
-					
-				 	if ($field_options['primary_key'] == true && !$field_options['auto_increment'] && !$field_options['auto_generated']) {
-						$primary_keys[$field] = $input_data[$field];
-					}
-					
-					if(isset($field_options['cast']))
-							$input_data[$field] = $this -> _castData($input_data[$field] , $field_options['cast']);
-	
-					if ($field_options['unique'] == true) {
-						//$primary_key=$field;
+					if(!$field_options['exclude']){
+						$input_data[$field] = (empty($data[$field])) ? $field_options['default'] : $data[$field];
+		
+						if ($field_options['auto_increment'] == true) {
+							$auto_incremented_field = $field;
+							unset($input_data[$field]);
+						}
+						
+						if ($field_options['auto_generated'] == true) {
+							unset($input_data[$field]);
+						}
+						
+					 	if ($field_options['primary_key'] == true && !$field_options['auto_increment'] && !$field_options['auto_generated']) {
+							$primary_keys[$field] = $input_data[$field];
+						}
+						
+						if(isset($field_options['cast']))
+								$input_data[$field] = $this -> _castData($input_data[$field] , $field_options['cast']);
+		
+						if ($field_options['unique'] == true) {
+							//$primary_key=$field;
+						}
 					}
 	
 				}//end foreach
@@ -356,11 +358,13 @@ Abstract Class He2Model extends PVStaticInstance {
 							$primary_key = $field;
 							$wherelist[$field] = (!empty($this -> _collection -> $field)) ? $field_options['default'] : $this -> _collection -> $field;
 						}
-	
-						$input_data[$field] = (!$data[$field]) ? $this -> $field : $data[$field];
 						
-						if(isset($field_options['cast']))
-							$input_data[$field] = $this -> _castData($input_data[$field] , $field_options['cast']);
+						if(!$field_options['exclude']){
+							$input_data[$field] = (!$data[$field]) ? $this -> $field : $data[$field];
+						
+							if(isset($field_options['cast']))
+								$input_data[$field] = $this -> _castData($input_data[$field] , $field_options['cast']);
+						}
 					}
 	
 				}//end foreach
@@ -869,7 +873,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 
-		$defaults = array('primary_key' => false, 'unique' => false, 'type' => 'string', 'auto_increment' => false, 'default' => '', 'auto_generated' => false);
+		$defaults = array('primary_key' => false, 'unique' => false, 'type' => 'string', 'auto_increment' => false, 'default' => '', 'auto_generated' => false, 'exclude' => false);
 		
 		$defaults = self::_applyFilter(get_class(), __FUNCTION__, $defaults , array('event' => 'return'));
 		$defaults = self::_applyFilter(get_called_class(), __FUNCTION__, $defaults , array('event' => 'return'));
