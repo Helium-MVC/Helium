@@ -42,7 +42,10 @@ Abstract Class He2Model extends PVStaticInstance {
 			'create_table' => true, 
 			'column_check' => true, 
 			'storage' => '',
-			'connection' => null
+			'connection' => null,
+			'table_name' => null, 
+			'cache' => false,
+			'cache_method' => null
 		);
 		
 		$this -> _config += $default_config;
