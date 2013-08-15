@@ -12,7 +12,7 @@ Class He2Template extends PVStaticInstance {
 	/**
 	 * The constrcutor for the template.
 	 */
-	function __construct($registry, $request) {
+	function __construct($registry = null, $request = null) {
 		
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $registry, $request);
