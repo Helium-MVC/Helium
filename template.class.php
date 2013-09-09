@@ -73,7 +73,7 @@ Class He2Template extends PVStaticInstance {
 
 	public function __get($index) {
 		if (!isset($this -> _vars[$index]) && class_exists($index) ) {
-			$class = new $index();
+			$class = new $index($this -> _registry, $this -> request);
 			$this -> _vars[$index] = $class;
 		}
 
