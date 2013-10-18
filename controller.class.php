@@ -148,6 +148,18 @@ Abstract class He2Controller extends PVStaticInstance {
 		return $object;
 	}
 	
+	/**
+	 * Implementing default behavior to execute when a page is not found. Can be overrided using inheritance
+	 */
+	public function error404() {
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $class );
+		
+		echo "Error 404 Page Not Found";
+		
+		exit();
+	}
+	
 	
 	/**
 	 * The abstract function required by all classes that are extending the controller. At very least, the controller
@@ -159,3 +171,4 @@ Abstract class He2Controller extends PVStaticInstance {
 	abstract function index();
 	
 	}
+
