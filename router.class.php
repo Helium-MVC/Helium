@@ -41,21 +41,29 @@ class He2Router extends PVStaticInstance {
 		
 		$this -> getController();
 
-		if (is_readable($this -> file) == false) {
-			$this -> file = $this -> path . '/error404.php';
-			$this -> controller = 'error404';
+		if (!file_exists($this -> file) || is_readable($this -> file) == false) {
+			$this -> file = $this -> path . '/errorController.php';
+			@include $this -> file;
+			
+			if(class_exists('errorController')) {
+				$controller = new errorController($this -> registry);
+			} else {
+				throw new Exception("No Error Controller excist. Please create errorController.");  
+			}
+		} else {
+			
+			include $this -> file;
+
+			$class = $this -> controller . 'Controller';
+			$controller = new $class($this -> registry);
 		}
-
-		include $this -> file;
-
-		$class = $this -> controller . 'Controller';
-		$controller = new $class($this -> registry);
-
-		if (is_callable(array($controller, $this -> action)) == false) {
-			$action = 'index';
+		
+		if (method_exists ( $controller , $this -> action) == false) {
+			$action = 'error404';
 		} else {
 			$action = $this -> action;
 		}
+		
 		$vars = $controller -> $action();
 		
 		if($vars instanceof Redirect) {
@@ -127,7 +135,9 @@ class He2Router extends PVStaticInstance {
 			$this -> action = 'index';
 		}
 		
+		
 		$this -> file = $this -> path . '/' . $this -> controller . 'Controller.php';
+		
 		
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $route, $rt);
 	}
