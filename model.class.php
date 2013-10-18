@@ -149,11 +149,24 @@ Abstract Class He2Model extends PVStaticInstance {
 			foreach ($this->_validators as $field => $rules) {
 
 				foreach ($rules as $key => $rule) {
-						
-					
+									
 					$rule += $this -> _getValidationRuleDefaults();
 					
-					if ($this -> _checkValidationEvent($options['event'], $rule['event'])  && !PVValidator::check($key, @$data[$field], $rule['options'])) {
+					$includes = array();
+					
+					if($rule['include']) {
+						
+						if(is_array($rule['include'])) {
+							foreach($rule['include'] as $include) {
+								$includes[$include] = $data[$include];
+							}
+						} else {
+							$includes[$rule['include']] = $data[$rule['include']];
+						}
+						
+					}
+					
+					if ($this -> _checkValidationEvent($options['event'], $rule['event'])  && !PVValidator::check($key, @$data[$field], $rule['options'], $includes)) {
 						$hasError = false;
 						$this -> _addValidationError($field, $rule['error']);
 					}
@@ -1054,7 +1067,8 @@ Abstract Class He2Model extends PVStaticInstance {
 		
 		$defaults = array(
 			'event' => array('create', 'update'),
-			'options' => array()
+			'options' => array(),
+			'include' => null
 		);
 		
 		$defaults = self::_applyFilter(get_class(), __FUNCTION__, $defaults , array('event' => 'return'));
