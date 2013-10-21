@@ -158,10 +158,10 @@ Abstract Class He2Model extends PVStaticInstance {
 						
 						if(is_array($rule['include'])) {
 							foreach($rule['include'] as $include) {
-								$includes[$include] = $data[$include];
+								$includes[$include] = @$data[$include];
 							}
 						} else {
-							$includes[$rule['include']] = $data[$rule['include']];
+							$includes[$rule['include']] = @$data[$rule['include']];
 						}
 						
 					}
