@@ -667,7 +667,11 @@ Abstract Class He2Model extends PVStaticInstance {
 			$args['join'] = $query;
 			
 			if($args['paginate']) {
-				$this -> _getPaginationData($args['table'], $args['current_page'], $args['results_per_page'], $args['join']);
+				$pagination = $this -> _getPaginationData($args['table'], $args['current_page'], $args['results_per_page'], $args['join'], $args['where']);
+				$options['pagination'] = $pagination;
+				
+				$args['limit'] = $args['results_per_page'];
+				$args['offset'] = $pagination['start_location'];
 			}
 			
 			$result = PVDatabase::selectPreparedStatement($args,$options);
@@ -1224,6 +1228,10 @@ Abstract Class He2Model extends PVStaticInstance {
 			
 		}//end else if
 		
+		if(isset($options['pagination'])) {
+			$this -> addToCollectionWithName('he2pagination', $options['pagination']);
+		}
+		
 		if($options['cache'] == true) {
 			$this -> _writeCache($cache_name, $result_set, $options);
 		}
@@ -1320,9 +1328,9 @@ Abstract Class He2Model extends PVStaticInstance {
 	/**
 	 * 
 	 */
-	protected function _getPaginationData($current_page, $results_per_page, $joins ='') {
+	protected function _getPaginationData($table, $current_page, $results_per_page, $joins ='',$where_clause = '', $order_by = '') {
 		
-		PVDatabase::getPagininationOffset($table, $joins , $where_clause = '', $current_page, $results_per_page , $order_by = '');
+		return PVDatabase::getPagininationOffset($table, $joins , $where_clause, $current_page, $results_per_page , $order_by);
 		
 	}
 	
