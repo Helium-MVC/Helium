@@ -1115,6 +1115,8 @@ Abstract Class He2Model extends PVStaticInstance {
 		} else {
 			
 			$args = array(
+				'prequery' => isset($conditions['prequery']) ? $conditions['prequery'] : '', 
+				'postquery' => isset($conditions['postquery']) ? $conditions['postquery'] : '', 
 				'where' => isset($conditions['conditions']) ? $conditions['conditions'] : array(), 
 				'fields' => isset($conditions['fields']) ? $conditions['fields'] : '*', 
 				'table' => PVDatabase::formatTableName($this -> _formTableName(get_class($this))),
