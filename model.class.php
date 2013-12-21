@@ -465,7 +465,7 @@ Abstract Class He2Model extends PVStaticInstance {
 	 * 
 	 * @param array $conditions The conditions used for finding row or document
 	 * 		-'conditions' _array_:The conditions used finding a value. The array key => value return into column = 'value'
-	 * 		-'join' _array_: Used the joins specefied in the child model in the '$_joins; variable
+	 * 		-'join' _array_: Used the joins specefied in the child model in the '$_joins; variable or a direct join
 	 * 
 	 * @param array $options Options that can change how the model reacts
 	 * 		-'cache' _string_ : Cache the models results and served cached data
@@ -556,8 +556,11 @@ Abstract Class He2Model extends PVStaticInstance {
 			if (isset($conditions['join']) && isset($this -> _joins)) {
 				foreach ($conditions['join'] as $join) {
 
-					if (isset($this -> _joins[$join]))
+					if (isset($this -> _joins[$join])) {
 						$query .= $this -> _joinTable($this -> _joins[$join]) . ' ';
+					} else {
+						$query .= ' '. $join. ' ';
+					}
 
 				}//end foreach
 			}
@@ -599,7 +602,7 @@ Abstract Class He2Model extends PVStaticInstance {
 	 * 			-'limit' _int_: A limit on the amount of fields that will be returned
 	 * 			-'offset' _int_: An offset to the results in the query
 	 * 			-'order_by' _string_: How to order
-	 * 			-'join' _array_: Used the joins specefied in the child model in the '$_joins; variable
+	 * 			-'join' _array_: Used the joins specefied in the child model in the '$_joins; variable or a direct join
 	 * @param array $options Options can be used to customize the finding of data
 	 * 			-'results' _mixed_: How the results will be returned. Default option is 'object', in wich the results will be stored in an
 	 * 			stdObject. The other option is 'model', in which the results will be stored in a new instance of the current model
@@ -658,8 +661,11 @@ Abstract Class He2Model extends PVStaticInstance {
 			if (isset($conditions['join']) && isset($this -> _joins)) {
 				foreach ($conditions['join'] as $join) {
 
-					if (isset($this -> _joins[$join]))
+					if (isset($this -> _joins[$join])) {
 						$query .= $this -> _joinTable($this -> _joins[$join]) . ' ';
+					} else {
+						$query .= ' ' . $join . ' ';
+					}
 
 				}//end foreach
 			}
