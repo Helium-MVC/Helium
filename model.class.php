@@ -673,7 +673,7 @@ Abstract Class He2Model extends PVStaticInstance {
 			$args['join'] = $query;
 			
 			if($args['paginate']) {
-				$pagination = $this -> _getPaginationData($args['table'], $args['current_page'], $args['results_per_page'], $args['join'], $args['where']);
+				$pagination = $this -> _getPaginationData($args['table'], $args['current_page'], $args['results_per_page'], $args['join'], $args['where'], $args['order_by'], $args['paginate_fields']);
 				$options['pagination'] = $pagination;
 				
 				$args['limit'] = $args['results_per_page'];
@@ -1109,6 +1109,7 @@ Abstract Class He2Model extends PVStaticInstance {
 				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
 				'group_by' => isset($conditions['group_by']) ? $conditions['group_by'] : null,
 				'paginate' => isset($conditions['paginate']) ? $conditions['paginate'] : false,
+				'paginate_fields' =>  isset($conditions['paginate_fields']) ? $conditions['paginate_fields'] : 'COUNT(*) as count',
 				'results_per_page' => isset($conditions['results_per_page']) ? $conditions['results_per_page'] : 20,
 				'current_page' => isset($conditions['current_page']) ? $conditions['current_page'] : 0,
 				
@@ -1131,6 +1132,7 @@ Abstract Class He2Model extends PVStaticInstance {
 				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
 				'group_by' => isset($conditions['group_by']) ? $conditions['group_by'] : null,
 				'paginate' => isset($conditions['paginate']) ? $conditions['paginate'] : false,
+				'paginate_fields' =>  isset($conditions['paginate_fields']) ? $conditions['paginate_fields'] : 'COUNT(*) as count',
 				'results_per_page' => isset($conditions['results_per_page']) ? $conditions['results_per_page'] : 20,
 				'current_page' => isset($conditions['current_page']) ? $conditions['current_page'] : 0,
 			);
@@ -1336,9 +1338,9 @@ Abstract Class He2Model extends PVStaticInstance {
 	/**
 	 * 
 	 */
-	protected function _getPaginationData($table, $current_page, $results_per_page, $joins ='',$where_clause = '', $order_by = '') {
+	protected function _getPaginationData($table, $current_page, $results_per_page, $joins ='',$where_clause = '', $order_by = '', $fields = '') {
 		
-		return PVDatabase::getPagininationOffset($table, $joins , $where_clause, $current_page, $results_per_page , $order_by);
+		return PVDatabase::getPagininationOffset($table, $joins , $where_clause, $current_page, $results_per_page , $order_by, $fields);
 		
 	}
 	
