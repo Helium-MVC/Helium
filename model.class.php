@@ -231,6 +231,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		$created = false;
 		$id = 0;
 		$primary_keys = array();
+		$parameter_data = $data;
 
 		if (PVDatabase::getDatabaseType() != 'mongo') {
 			$this -> checkSchema();
@@ -305,8 +306,8 @@ Abstract Class He2Model extends PVStaticInstance {
 			$this -> first($conditions);
 		}
 		
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $created, $id, $data, $options);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $created, $id, $data, $options);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $created, $id, $parameter_data, $options);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $created, $id, $parameter_data, $options);
 		
 		return $created;
 	}
@@ -347,6 +348,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		$data = $filtered['data'];
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
+		$parameter_data = $data;
 
 		$result = false;
 		
@@ -401,8 +403,8 @@ Abstract Class He2Model extends PVStaticInstance {
 				$this -> sync();
 		}
 		
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions, $options);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $data, $conditions, $options);
+		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $parameter_data, $conditions, $options);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $parameter_data, $conditions, $options);
 
 		return $result;
 	}//end update
