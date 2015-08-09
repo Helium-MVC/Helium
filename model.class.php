@@ -353,7 +353,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		$result = false;
 		
 		if($options['use_schema']) {
-			$defaults = $this -> _getModelDefaults();
+			$defaults = $this -> _getModelDefaults(false);
 			$data += $defaults;
 		}
 		
@@ -369,19 +369,22 @@ Abstract Class He2Model extends PVStaticInstance {
 			if($options['use_schema']) {
 				
 				foreach ($this->_schema as $field => $field_options) {
-					$field_options += $this -> _getFieldOptionsDefaults();
-	
-					if ((!isset($field_options['null']) || (isset($field_options['null']) && !$field_options['null'])) || !empty($data[$field])) {
-						if ($field_options['primary_key']) {
-							$primary_key = $field;
-							$wherelist[$field] = (!empty($this -> _collection -> $field)) ? $field_options['default'] : $this -> _collection -> $field;
-						}
-						
-						if(!$field_options['exclude']){
-							$input_data[$field] = (!$data[$field]) ? $this -> $field : $data[$field];
-						
-							if(isset($field_options['cast']))
-								$input_data[$field] = $this -> _castData($input_data[$field] , $field_options['cast']);
+					
+					if(isset($data[$field])){
+						$field_options += $this -> _getFieldOptionsDefaults();
+		
+						if ((!isset($field_options['null']) || (isset($field_options['null']) && !$field_options['null'])) || !empty($data[$field])) {
+							if ($field_options['primary_key']) {
+								$primary_key = $field;
+								$wherelist[$field] = (!empty($this -> _collection -> $field)) ? $field_options['default'] : $this -> _collection -> $field;
+							}
+							
+							if(!$field_options['exclude']){
+								$input_data[$field] = (!$data[$field]) ? $this -> $field : $data[$field];
+							
+								if(isset($field_options['cast']))
+									$input_data[$field] = $this -> _castData($input_data[$field] , $field_options['cast']);
+							}
 						}
 					}
 	
@@ -865,10 +868,11 @@ Abstract Class He2Model extends PVStaticInstance {
 	 * is present in the dataset, that becomes the default. Else the value for a field becomes the default value
 	 * set in the schema
 	 * 
+	 * @param boolean $full_schema This will return the full schema even if the value is not presentin the collection
 	 * @return array $defaults Returns an array of defaults for the model
 	 * @access protected
 	 */
-	protected function _getModelDefaults() {
+	protected function _getModelDefaults($full_schema = true) {
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
@@ -877,7 +881,11 @@ Abstract Class He2Model extends PVStaticInstance {
 		
 		if (isset($this -> _schema)) {
 			foreach ($this->_schema as $key => $value) {
-				$defaults[$key] = (@$this ->  _collection -> $key) ? $this ->  _collection -> $key : @$value['default'];
+				if($full_schema) {
+					$defaults[$key] = (@$this ->  _collection -> $key) ? $this ->  _collection -> $key : @$value['default'];
+				} else if($this ->  _collection -> get($key)) {
+					$defaults[$key] = $this ->  _collection -> $key;
+				}
 			}
 		}
 		
