@@ -73,6 +73,8 @@ Abstract Class He2Model extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 		
+		$this -> _setConnection();
+		
 		$tablename = $this -> getTableName();
 		
 		$check_table_name = (PVDatabase::getDatabaseType() == 'postgresql') ? $this -> getTableName(false) : $tablename;
@@ -107,6 +109,8 @@ Abstract Class He2Model extends PVStaticInstance {
 				}
 			}//end foreach
 		}
+		
+		$this -> _resetConnection();
 	}//end checkSchema
 
 	/**
