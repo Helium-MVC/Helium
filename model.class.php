@@ -1179,7 +1179,11 @@ Abstract Class He2Model extends PVStaticInstance {
 		if($cache_name != null && !$this ->_checkCache($cache_name)) {
 			
 			foreach ($result as $row) {
-				$this -> addToCollection($row);
+				if(class_exists('\\MongoDB\Model\BSONDocument') && is_a($row, '\\MongoDB\Model\BSONDocument')) {
+					$this -> addToCollection($row -> getArrayCopy());
+				} else {
+					$this -> addToCollection($row);
+				}
 			}
 			
 			return true;
@@ -1192,6 +1196,10 @@ Abstract Class He2Model extends PVStaticInstance {
 		if (PVDatabase::getDatabaseType() == 'mongo') {
 			
 			foreach ($result as $row) {
+				
+				if(class_exists('\\MongoDB\Model\BSONDocument') && is_a($row, '\\MongoDB\Model\BSONDocument')) {
+					$row = $row -> getArrayCopy();
+				}
 
 				if(isset($options['gridFS'])){
 
