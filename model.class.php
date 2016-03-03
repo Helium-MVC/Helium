@@ -662,17 +662,18 @@ Abstract Class He2Model extends PVStaticInstance {
 		if (PVDatabase::getDatabaseType() == 'mongo' && !$has_cache) {
 			
 			$options = $this -> _configureConnection($options);
+			$args['fields'] = array();
 			
 			if(isset($args['group_by']) && !empty($args['group_by'])) {
-				$options['sort'] = $args['group_by'];
+				$args['fields']['sort'] = $args['group_by'];
 			}
 			
 			if(isset($args['limit']) && !empty($args['limit'])) {
-				$options['limit'] = $args['limit'];
+				$args['fields']['limit'] = $args['limit'];
 			}
 			
 			if(isset($args['offset']) && !empty($args['offset'])) {
-				$options['skip'] = $args['skip'];
+				$args['fields']['skip'] = $args['skip'];
 			}
 			
 			$result = PVDatabase::selectStatement($args, $options);
