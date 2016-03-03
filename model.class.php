@@ -673,7 +673,7 @@ Abstract Class He2Model extends PVStaticInstance {
 			}
 			
 			if(isset($args['offset']) && !empty($args['offset'])) {
-				$args['fields']['skip'] = $args['skip'];
+				$args['fields']['skip'] = $args['offset'];
 			}
 			
 			$result = PVDatabase::selectStatement($args, $options);
