@@ -662,6 +662,19 @@ Abstract Class He2Model extends PVStaticInstance {
 		if (PVDatabase::getDatabaseType() == 'mongo' && !$has_cache) {
 			
 			$options = $this -> _configureConnection($options);
+			
+			if(isset($args['group_by']) && !empty($args['group_by'])) {
+				$options['sort'] = $args['group_by'];
+			}
+			
+			if(isset($args['limit']) && !empty($args['limit'])) {
+				$options['limit'] = $args['limit'];
+			}
+			
+			if(isset($args['offset']) && !empty($args['offset'])) {
+				$options['skip'] = $args['skip'];
+			}
+			
 			$result = PVDatabase::selectStatement($args, $options);
 
 		} else if(!$has_cache) {
@@ -1179,11 +1192,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		if($cache_name != null && !$this ->_checkCache($cache_name)) {
 			
 			foreach ($result as $row) {
-				if(class_exists('\\MongoDB\Model\BSONDocument') && is_a($row, '\\MongoDB\Model\BSONDocument')) {
-					$this -> addToCollection($row -> getArrayCopy());
-				} else {
-					$this -> addToCollection($row);
-				}
+				$this -> addToCollection($row);
 			}
 			
 			return true;
@@ -1196,10 +1205,6 @@ Abstract Class He2Model extends PVStaticInstance {
 		if (PVDatabase::getDatabaseType() == 'mongo') {
 			
 			foreach ($result as $row) {
-				
-				if(class_exists('\\MongoDB\Model\BSONDocument') && is_a($row, '\\MongoDB\Model\BSONDocument')) {
-					$row = $row -> getArrayCopy();
-				}
 
 				if(isset($options['gridFS'])){
 
@@ -1299,7 +1304,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		if(in_array($cast, $cast_types)){
 			settype($data, $cast);
 		} else if($cast == 'mongoid'){
-			$data = new MongoID($data);
+			$data = MongoSelector::getID($data);
 		} else if($cast == 'array_recursive'){
 			settype($data, 'array');
 			$data = PVConversions::objectToArray($data);
