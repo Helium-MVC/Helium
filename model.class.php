@@ -663,17 +663,18 @@ Abstract Class He2Model extends PVStaticInstance {
 			
 			$options = $this -> _configureConnection($options);
 			$args['fields'] = array();
-			
-			if(isset($args['group_by']) && !empty($args['group_by'])) {
-				$args['fields']['sort'] = $args['group_by'];
-			}
-			
-			if(isset($args['limit']) && !empty($args['limit'])) {
-				$args['fields']['limit'] = $args['limit'];
-			}
-			
-			if(isset($args['offset']) && !empty($args['offset'])) {
-				$args['fields']['skip'] = $args['offset'];
+			if(class_exists('\\MongoDB\Driver\Manager')) {
+				if(isset($args['order_by']) && !empty($args['order_by'])) {
+					$args['fields']['sort'] = $args['order_by'];
+				}
+				
+				if(isset($args['limit']) && !empty($args['limit'])) {
+					$args['fields']['limit'] = $args['limit'];
+				}
+				
+				if(isset($args['offset']) && !empty($args['offset'])) {
+					$args['fields']['skip'] = $args['offset'];
+				}
 			}
 			
 			$result = PVDatabase::selectStatement($args, $options);
