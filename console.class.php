@@ -49,7 +49,7 @@ class HeliumConsole extends He2App {
 			$object = new $class();
 			
 			if(isset($args[1])) {
-				$object -> $args[1]();
+				$object -> {$args[1]}();
 				
 			}
 		}
