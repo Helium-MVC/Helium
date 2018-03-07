@@ -45,12 +45,12 @@ class HeliumConsole extends He2App {
 			$object -> $action();
 			
 		} else {
-			$class = $args[0];
+			$class = array_shift($args);
 			$object = new $class();
 			
-			if(isset($args[1])) {
-				$object -> {$args[1]}();
-				
+			if(isset($args[0])) {
+				$function = array_shift($args);
+				call_user_func_array(array($object,$function), $args);
 			}
 		}
 
