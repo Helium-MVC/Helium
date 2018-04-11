@@ -15,6 +15,11 @@ class HeliumConsole extends He2App {
 		spl_autoload_register('He2App::loadModels');
 
 		spl_autoload_register('He2App::loadComponents');
+		
+		spl_autoload_register('He2App::loadTraits');
+		
+		spl_autoload_register('He2App::loadServices');
+		
 
 		spl_autoload_register('HeliumConsole::loadCommandLine');
 
