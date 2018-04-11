@@ -2,7 +2,7 @@
 
 class He2App extends PVStaticInstance {
 
-  protected static $_registry = null;
+	protected static $_registry = null;
 
 	protected static $_request = null;
 
@@ -13,6 +13,8 @@ class He2App extends PVStaticInstance {
 		
 		spl_autoload_register('He2App::loadModels');
 		spl_autoload_register('He2App::loadComponents');
+		spl_autoload_register('He2App::loadTraits');
+		spl_autoload_register('He2App::loadServices');
 
 		self::_initRegistry();
 		self::_initRouter();
@@ -96,6 +98,28 @@ class He2App extends PVStaticInstance {
 	public static function loadComponents($class) {
 		$filename = $class . '.php';
 		$file = SITE_PATH . 'extensions' . DS . 'components' . DS . $filename;
+
+		if (!file_exists($file)) {
+			return false;
+		}
+		require_once $file;
+		return true;
+	}
+
+	public static function loadTraits($class) {
+		$filename = $class . '.php';
+		$file = SITE_PATH . 'extensions' . DS . 'traits' . DS . $filename;
+
+		if (!file_exists($file)) {
+			return false;
+		}
+		require_once $file;
+		return true;
+	}
+	
+	public static function loadServices($class) {
+		$filename = $class . '.php';
+		$file = SITE_PATH . 'services' . DS . $filename;
 
 		if (!file_exists($file)) {
 			return false;
