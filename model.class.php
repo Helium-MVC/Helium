@@ -93,7 +93,7 @@ Abstract Class He2Model extends PVStaticInstance {
 					$schema[$key]['default'] = '\'\'';
 				}
 				
-				if(($value['type'] == 'uuid' || $value['type'] == 'guid') && isset($value['auto_increment']) && $value['auto_increment'] == true) {
+				if(isset($value['auto_increment']) && $value['auto_increment'] == true && isset($value['default']) && $value['default']) {
 					unset($schema[$key]['auto_increment']);
 				}
 			}//endforeach
