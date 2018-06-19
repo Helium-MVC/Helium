@@ -39,6 +39,8 @@ class He2Router extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 		
+		$class = null;
+		
 		$this -> getController();
 
 		if (!file_exists($this -> file) || is_readable($this -> file) == false) {
