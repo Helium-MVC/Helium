@@ -1,4 +1,7 @@
 <?php
+namespace prodigyview\helium;
+
+use prodigyview\helium\He2App;
 
 class HeliumConsole extends He2App {
 
@@ -12,16 +15,10 @@ class HeliumConsole extends He2App {
 
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 
-		spl_autoload_register('He2App::loadModels');
+		spl_autoload_register('prodigyview\helium\He2App::loadNamespacedComponents');
+		spl_autoload_register('prodigyview\helium\He2App::loadNormalComponents');
 
-		spl_autoload_register('He2App::loadComponents');
-		
-		spl_autoload_register('He2App::loadTraits');
-		
-		spl_autoload_register('He2App::loadServices');
-		
-
-		spl_autoload_register('HeliumConsole::loadCommandLine');
+		spl_autoload_register('prodigyview\helium\HeliumConsole::loadCommandLine');
 
 		self::_initRegistry();
 
@@ -34,7 +31,7 @@ class HeliumConsole extends He2App {
 		self::_notify(get_called_class() . '::' . __FUNCTION__);
 
 
-		$args = PVCli::parse($argv = null);
+		$args = \PVCli::parse($argv = null);
 		
 		if($args[0] == 'controller') {
 			$controller = $args['controller'].'Controller.php';
