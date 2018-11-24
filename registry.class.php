@@ -1,6 +1,8 @@
 <?php
 
-Class He2Registry extends PVStaticInstance {
+namespace prodigyview\helium;
+
+Class He2Registry extends \PVStaticInstance {
 
 	private $vars = array();
 
