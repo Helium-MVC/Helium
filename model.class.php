@@ -1,6 +1,8 @@
 <?php
 
-Abstract Class He2Model extends PVStaticInstance {
+namespace prodigyview\helium;
+
+Abstract Class He2Model extends \PVStaticInstance {
 
 	protected $registry;
 	protected $_errors;
@@ -31,7 +33,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		$data = self::_applyFilter(get_class(), __FUNCTION__, $data, array('event' => 'args'));
 		$data = self::_applyFilter(get_called_class(), __FUNCTION__, $data, array('event' => 'args'));
 		
-		$this -> registry = new PVCollection();
+		$this -> registry = new \PVCollection();
 
 		if ($data) {
 			foreach($data as $key => $value)
@@ -77,10 +79,10 @@ Abstract Class He2Model extends PVStaticInstance {
 		
 		$tablename = $this -> getTableName();
 		
-		$check_table_name = (PVDatabase::getDatabaseType() == 'postgresql') ? $this -> getTableName(false) : $tablename;
-		$schema = PVDatabase::getSchema(false);
+		$check_table_name = (\PVDatabase::getDatabaseType() === 'postgresql') ? $this -> getTableName(false) : $tablename;
+		$schema = \PVDatabase::getSchema(false);
 
-		if (($this -> _config['create_table'] && !PVDatabase::tableExist($check_table_name, $schema) && isset($this -> _schema)) || ($force_check == true && !PVDatabase::tableExist($check_table_name, $schema))) {
+		if (($this -> _config['create_table'] && !\PVDatabase::tableExist($check_table_name, $schema) && isset($this -> _schema)) || ($force_check === true && !\PVDatabase::tableExist($check_table_name, $schema))) {
 			$primary_keys = '';
 			$first = 1;
 			$schema = $this -> _schema;
@@ -93,19 +95,19 @@ Abstract Class He2Model extends PVStaticInstance {
 					$schema[$key]['default'] = '\'\'';
 				}
 				
-				if(isset($value['auto_increment']) && $value['auto_increment'] == true && isset($value['default']) && $value['default']) {
+				if(isset($value['auto_increment']) && $value['auto_increment'] === true && isset($value['default']) && $value['default']) {
 					unset($schema[$key]['auto_increment']);
 				}
 			}//endforeach
 
 			$options = array('primary_key' => $primary_keys);
-			PVDatabase::createTable($tablename, $schema, $options);
-		} else if (($this -> _config['column_check'] && isset($this -> _schema)) || $force_check == true ) {
+			\PVDatabase::createTable($tablename, $schema, $options);
+		} else if (($this -> _config['column_check'] && isset($this -> _schema)) || $force_check === true ) {
 			$schema = $this -> _schema;
 
 			foreach ($schema as $key => $value) {
-				if (!PVDatabase::columnExist($check_table_name, $key)) {
-					PVDatabase::addColumn($tablename, $key, $value);
+				if (!\PVDatabase::columnExist($check_table_name, $key)) {
+					\PVDatabase::addColumn($tablename, $key, $value);
 				}
 			}//end foreach
 		}
@@ -170,7 +172,7 @@ Abstract Class He2Model extends PVStaticInstance {
 						
 					}
 					
-					if ($this -> _checkValidationEvent($options['event'], $rule['event'])  && !PVValidator::check($key, @$data[$field], $rule['options'], $includes)) {
+					if ($this -> _checkValidationEvent($options['event'], $rule['event'])  && !\PVValidator::check($key, @$data[$field], $rule['options'], $includes)) {
 						$hasError = false;
 						$this -> _addValidationError($field, $rule['error']);
 					}
@@ -237,13 +239,13 @@ Abstract Class He2Model extends PVStaticInstance {
 		$primary_keys = array();
 		$parameter_data = $data;
 
-		if (PVDatabase::getDatabaseType() != 'mongo') {
+		if (\PVDatabase::getDatabaseType() != 'mongo') {
 			$this -> checkSchema();
 		}
 
 		if (!$options['validate'] || $this -> validate($data,$options['validate_options'])) {
 			$table_name = $this -> _formTableName(get_class($this));
-			$table_name = PVDatabase::formatTableName(strtolower($table_name));
+			$table_name = \PVDatabase::formatTableName(strtolower($table_name));
 			
 			if($options['use_schema']) {
 				$defaults = $this -> _getModelDefaults();
@@ -259,23 +261,23 @@ Abstract Class He2Model extends PVStaticInstance {
 					if(!$field_options['exclude']){
 						$input_data[$field] = (empty($data[$field])) ? $field_options['default'] : $data[$field];
 		
-						if ($field_options['auto_increment'] == true) {
+						if ($field_options['auto_increment'] === true) {
 							$auto_incremented_field = $field;
 							unset($input_data[$field]);
 						}
 						
-						if ($field_options['auto_generated'] == true) {
+						if ($field_options['auto_generated'] === true) {
 							unset($input_data[$field]);
 						}
 						
-					 	if ($field_options['primary_key'] == true && !$field_options['auto_increment'] && !$field_options['auto_generated']) {
+					 	if ($field_options['primary_key'] === true && !$field_options['auto_increment'] && !$field_options['auto_generated']) {
 							$primary_keys[$field] = $input_data[$field];
 						}
 						
 						if(isset($field_options['cast']))
 								$input_data[$field] = $this -> _castData($input_data[$field] , $field_options['cast']);
 		
-						if ($field_options['unique'] == true) {
+						if ($field_options['unique'] === true) {
 							//$primary_key=$field;
 						}
 					}
@@ -288,9 +290,9 @@ Abstract Class He2Model extends PVStaticInstance {
 			$options = $this -> _configureConnection($options);
 			
 			if($options['return_last_id'] && !empty($auto_incremented_field))
-				$id = PVDatabase::preparedReturnLastInsert($table_name, $auto_incremented_field, $table_name, $input_data, array(), $options);
+				$id = \PVDatabase::preparedReturnLastInsert($table_name, $auto_incremented_field, $table_name, $input_data, array(), $options);
 			else {
-				PVDatabase::preparedInsert($table_name, $input_data);
+				\PVDatabase::preparedInsert($table_name, $input_data);
 				$created = true;
 			}
 
@@ -302,7 +304,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		
 		$this -> _resetConnection();
 		
-		if($created == true && $auto_incremented_field){
+		if($created === true && $auto_incremented_field){
 			$conditions = array('conditions' => array($auto_incremented_field => $id));
 			$this -> first($conditions);
 		} else if(!empty($primary_keys)) {
@@ -364,7 +366,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		if (!$options['validate'] || $this -> validate($data, $options['validate_options'])) {
 			
 			$table_name = $this -> _formTableName(get_class($this));
-			$table_name = PVDatabase::formatTableName($table_name);
+			$table_name = \PVDatabase::formatTableName($table_name);
 			
 			$input_data = array();
 			$primary_key = '';
@@ -399,7 +401,7 @@ Abstract Class He2Model extends PVStaticInstance {
 			}
 			
 			$options = $this -> _configureConnection($options);
-			$result = PVDatabase::preparedUpdate($table_name, $input_data, $wherelist, array(), array(), $options);
+			$result = \PVDatabase::preparedUpdate($table_name, $input_data, $wherelist, array(), array(), $options);
 			$this -> addToCollection($input_data);
 		}
 
@@ -443,14 +445,14 @@ Abstract Class He2Model extends PVStaticInstance {
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 		
-		if (PVDatabase::getDatabaseType() != 'mongo') {
+		if (\PVDatabase::getDatabaseType() != 'mongo') {
 			$this -> checkSchema();
 		}
 		
 		$args = array(
 				'where' => isset($conditions['conditions']) ? $conditions['conditions'] : array(), 
 				'fields' => isset($conditions['fields']) ? $conditions['fields'] : array(), 
-				'table' => PVDatabase::formatTableName($this -> _formTableName(get_class($this))),
+				'table' => \PVDatabase::formatTableName($this -> _formTableName(get_class($this))),
 				'limit' => isset($conditions['limit']) ? $conditions['limit'] : null,
 				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
 				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
@@ -458,7 +460,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		);
 
 		$options = $this -> _configureConnection($options);
-		$result = PVDatabase::preparedDelete($args['table'], $args['where'], array(), $options);
+		$result = \PVDatabase::preparedDelete($args['table'], $args['where'], array(), $options);
 		
 		$this -> _resetConnection();
 		
@@ -530,17 +532,17 @@ Abstract Class He2Model extends PVStaticInstance {
 			$result_set = array();	
 		}
 
-		if (PVDatabase::getDatabaseType() == 'mongo' && !$has_cache ) {
+		if (\PVDatabase::getDatabaseType() === 'mongo' && !$has_cache ) {
 
 			$options['findOne'] = true;
 			$options = $this -> _configureConnection($options);
 			
-			$result = PVDatabase::selectStatement($args, $options);
+			$result = \PVDatabase::selectStatement($args, $options);
 			
 			if ($result) {
 				foreach ($result as $key => $value) {
 
-					if (!PVValidator::isInteger($key)){
+					if (!\PVValidator::isInteger($key)){
 						$this -> addToCollectionWithName($key, $value);
 						
 						if($options['cache']) {
@@ -574,12 +576,12 @@ Abstract Class He2Model extends PVStaticInstance {
 				}//end foreach
 			}
 			$args['join'] = $query;
-			$result = PVDatabase::selectPreparedStatement($args,$options);
-			$row = PVDatabase::fetchArray($result);
+			$result = \PVDatabase::selectPreparedStatement($args,$options);
+			$row = \PVDatabase::fetchArray($result);
 			
 			if(!empty($row)) {
 				foreach ($row as $key => $value) {
-					if (!PVValidator::isInteger($key)){
+					if (!\PVValidator::isInteger($key)){
 						$this -> addToCollectionWithName($key, $value);
 						
 						if($options['cache']) {
@@ -659,7 +661,7 @@ Abstract Class He2Model extends PVStaticInstance {
 			}
 		}
 		
-		if (PVDatabase::getDatabaseType() == 'mongo' && !$has_cache) {
+		if (\PVDatabase::getDatabaseType() === 'mongo' && !$has_cache) {
 			
 			$options = $this -> _configureConnection($options);
 			$args['fields'] = array();
@@ -677,7 +679,7 @@ Abstract Class He2Model extends PVStaticInstance {
 				}
 			}
 			
-			$result = PVDatabase::selectStatement($args, $options);
+			$result = \PVDatabase::selectStatement($args, $options);
 
 		} else if(!$has_cache) {
 			$this -> checkSchema();
@@ -704,7 +706,7 @@ Abstract Class He2Model extends PVStaticInstance {
 				$args['offset'] = $pagination['start_location'];
 			}
 			
-			$result = PVDatabase::selectPreparedStatement($args,$options);
+			$result = \PVDatabase::selectPreparedStatement($args,$options);
 		}
 
 		$this -> _processResults($result, $options, $cache_name);
@@ -811,7 +813,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		$table_name = ($this -> _config['table_name']) ?: $this -> _formTableName(get_class($this));
 		
 		if($use_schema) {
-			$table_name = PVDatabase::formatTableName($table_name);
+			$table_name = \PVDatabase::formatTableName($table_name);
 		}
 		
 		return $table_name;
@@ -848,7 +850,7 @@ Abstract Class He2Model extends PVStaticInstance {
 			$model = new $args['model']();
 			$table = $model -> getTableName();
 		} else {
-			$table = ($args['format_table']) ? PVDatabase::formatTableName(strtolower($args['table'])) : $args['table'];
+			$table = ($args['format_table']) ? \PVDatabase::formatTableName(strtolower($args['table'])) : $args['table'];
 		}
 
 		switch(strtolower($args['type'])) :
@@ -965,7 +967,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		preg_match_all('/[A-Z][^A-Z]*/', $name, $results);
 		$table = '';
 		foreach ($results[0] as $key => $part) {
-			if ($key == 0)
+			if ($key === 0)
 				$table .= strtolower($part);
 			else
 				$table .= '_' . strtolower($part);
@@ -1000,7 +1002,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		$options= self::_applyFilter(get_class(), __FUNCTION__, $options , array('event' => 'args'));
 		$options= self::_applyFilter(get_called_class(), __FUNCTION__, $options , array('event' => 'args'));
 
-		if ($this -> _config['storage'] == 'gridFS')
+		if ($this -> _config['storage'] === 'gridFS')
 			$options['gridFS'] = true;
 		
 		$options = self::_applyFilter(get_class(), __FUNCTION__, $options , array('event' => 'return'));
@@ -1012,7 +1014,7 @@ Abstract Class He2Model extends PVStaticInstance {
 	/**
 	 * If an error occurs in the validation process, the field that the error effects
 	 * and the message pertaining to the error will be passed here. The error message will be passed
-	 * to PVTemplate::errorMessage function and will be assigned to the error array for the model
+	 * to \PVTemplate::errorMessage function and will be assigned to the error array for the model
 	 * instance.
 	 * 
 	 * @param string $field The field the error is associated with
@@ -1037,7 +1039,7 @@ Abstract Class He2Model extends PVStaticInstance {
 		$field = $filtered['field'];
 		$error_message = $filtered['error_message'];
 		
-		$this -> _errors[$field][] = PVTemplate::errorMessage($error_message);
+		$this -> _errors[$field][] = \PVTemplate::errorMessage($error_message);
 		
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $field, $error_message);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $field, $error_message);
@@ -1070,10 +1072,10 @@ Abstract Class He2Model extends PVStaticInstance {
 		$allowed_events = $filtered['allowed_events'];
 		
 		$match = false;
-		if(is_string($passed_event) && is_string($allowed_events) &&  $passed_event ==  $allowed_events) {
+		if(is_string($passed_event) && is_string($allowed_events) &&  $passed_event ===  $allowed_events) {
 			$match = true;
 		} else if(is_array($passed_event) && is_array($allowed_events)) {
-			$match = PVTools::arraySearchRecursive($passed_event, $allowed_events);
+			$match = \PVTools::arraySearchRecursive($passed_event, $allowed_events);
 		} else if(is_array($passed_event) && !is_array($allowed_events)) {
 			$match = in_array($allowed_events, $passed_event);
 		} else if(!is_array($passed_event) && is_array($allowed_events)) {
@@ -1127,7 +1129,7 @@ Abstract Class He2Model extends PVStaticInstance {
 	 */
 	protected function _formatConditions($conditions = array(), $single = false) {
 		
-		if (PVDatabase::getDatabaseType() == 'mongo') {
+		if (\PVDatabase::getDatabaseType() === 'mongo') {
 			
 			$args = array(
 				'where' => isset($conditions['conditions']) ? $conditions['conditions'] : array(), 
@@ -1155,7 +1157,7 @@ Abstract Class He2Model extends PVStaticInstance {
 				'postquery' => isset($conditions['postquery']) ? $conditions['postquery'] : '', 
 				'where' => isset($conditions['conditions']) ? $conditions['conditions'] : array(), 
 				'fields' => isset($conditions['fields']) ? $conditions['fields'] : '*', 
-				'table' => PVDatabase::formatTableName($this -> _formTableName(get_class($this))),
+				'table' => \PVDatabase::formatTableName($this -> _formTableName(get_class($this))),
 				'limit' => isset($conditions['limit']) ? $conditions['limit'] : null,
 				'offset' => isset($conditions['offset']) ? $conditions['offset'] : null,
 				'order_by' => isset($conditions['order_by']) ? $conditions['order_by'] : null,
@@ -1200,11 +1202,11 @@ Abstract Class He2Model extends PVStaticInstance {
 			return true;
 		}
 		
-		if($options['cache'] == true) {
+		if($options['cache'] === true) {
 			$result_set = array();
 		}
 		
-		if (PVDatabase::getDatabaseType() == 'mongo') {
+		if (\PVDatabase::getDatabaseType() === 'mongo') {
 			
 			foreach ($result as $row) {
 
@@ -1218,12 +1220,12 @@ Abstract Class He2Model extends PVStaticInstance {
 					$row['getBytes'] = $bytes;
 				}
 
-				if($options['results'] == 'model') {
+				if($options['results'] === 'model') {
 					$class= get_called_class();
 					$row = new $class($row);
 				} 
 				
-				if($options['cache'] == true) {
+				if($options['cache'] === true) {
 					$result_set[] = $row;
 				}
 				
@@ -1231,32 +1233,32 @@ Abstract Class He2Model extends PVStaticInstance {
 			}
 		} else {
 			
-			if(PVDatabase::getDatabaseType() == 'postgresql') {
-				while($row = PVDatabase::fetchFields($result)){
+			if(\PVDatabase::getDatabaseType() === 'postgresql') {
+				while($row = \PVDatabase::fetchFields($result)){
 						
-					if($options['results'] == 'model') {
+					if($options['results'] === 'model') {
 						$class= get_called_class();
 						$row = new $class($row);
 					}
 					
-					if($options['cache'] == true) {
+					if($options['cache'] === true) {
 						$result_set[] = $row;
 					}
 					
 					$this -> addToCollection($row);
 				}
 			} else {
-				$rows = PVDatabase::fetchFields($result);
+				$rows = \PVDatabase::fetchFields($result);
 				
 				if(!empty($rows)) {
 					foreach ($rows as $row) {
 					
-						if($options['results'] == 'model') {
+						if($options['results'] === 'model') {
 							$class= get_called_class();
 							$row = new $class($row);
 						}
 						
-						if($options['cache'] == true) {
+						if($options['cache'] === true) {
 							$result_set[] = $row;
 						}
 			 
@@ -1271,7 +1273,7 @@ Abstract Class He2Model extends PVStaticInstance {
 			$this -> addToCollectionWithName('he2pagination', $options['pagination']);
 		}
 		
-		if($options['cache'] == true) {
+		if($options['cache'] === true) {
 			$this -> _writeCache($cache_name, $result_set, $options);
 		}
 	}//end proccess results
@@ -1303,13 +1305,14 @@ Abstract Class He2Model extends PVStaticInstance {
 		$cast = $filtered['cast'];
 		
 		$cast_types = array('boolean', 'integer', 'float', 'string', 'array', 'object', 'null');
+		
 		if(in_array($cast, $cast_types)){
 			settype($data, $cast);
-		} else if($cast == 'mongoid'){
+		} else if($cast === 'mongoid'){
 			$data = MongoSelector::getID($data);
-		} else if($cast == 'array_recursive'){
+		} else if($cast === 'array_recursive'){
 			settype($data, 'array');
-			$data = PVConversions::objectToArray($data);
+			$data = \PVConversions::objectToArray($data);
 		}
 		
 		$data = self::_applyFilter(get_class(), __FUNCTION__, $data , array('event' => 'return'));
@@ -1321,7 +1324,7 @@ Abstract Class He2Model extends PVStaticInstance {
 
 	/**
 	 * Sets the connection to the specified connection set in the configuration file if one is set. The connection must
-	 * also be specified in the the PVDatabase connection file.
+	 * also be specified in the the \PVDatabase connection file.
 	 * 
 	 * @return void
 	 * @access protected
@@ -1335,9 +1338,9 @@ Abstract Class He2Model extends PVStaticInstance {
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 		
 		if($this ->_config['connection'] != null) {
-			$this -> _config['stored_connection'] = PVDatabase::getDatabaseLink();
-			$this -> _config['stored_connection_name'] = PVDatabase::getConnectionName();
-			PVDatabase::setDatabase($this ->_config['connection']);
+			$this -> _config['stored_connection'] = \PVDatabase::getDatabaseLink();
+			$this -> _config['stored_connection_name'] = \PVDatabase::getConnectionName();
+			\PVDatabase::setDatabase($this ->_config['connection']);
 		}
 		
 		return null;
@@ -1360,7 +1363,7 @@ Abstract Class He2Model extends PVStaticInstance {
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 		
 		if($this ->_config['connection'] != null) {
-			PVDatabase::setDatabase($this -> _config['stored_connection_name']);
+			\PVDatabase::setDatabase($this -> _config['stored_connection_name']);
 		}
 		
 	}
@@ -1369,7 +1372,7 @@ Abstract Class He2Model extends PVStaticInstance {
 	 */
 	protected function _getPaginationData($table, $current_page, $results_per_page, $joins ='',$where_clause = '', $order_by = '', $fields = '') {
 		
-		return PVDatabase::getPagininationOffset($table, $joins , $where_clause, $current_page, $results_per_page , $order_by, $fields);
+		return \PVDatabase::getPagininationOffset($table, $joins , $where_clause, $current_page, $results_per_page , $order_by, $fields);
 		
 	}
 	
@@ -1383,7 +1386,7 @@ Abstract Class He2Model extends PVStaticInstance {
 	 * @access protected
 	 */
 	protected function _writeCache($name, $data, $options) {
-		return PVCache::writeCache($name, $data, $options);
+		return \PVCache::writeCache($name, $data, $options);
 	}
 	
 	/**
@@ -1395,7 +1398,7 @@ Abstract Class He2Model extends PVStaticInstance {
 	 * @access protected
 	 */
 	protected function _readCache($name) {
-		return PVCache::readCache($name);
+		return \PVCache::readCache($name);
 	}
 	
 	/**
@@ -1407,7 +1410,7 @@ Abstract Class He2Model extends PVStaticInstance {
 	 * @access protected
 	 */
 	protected function _checkCache($name) {
-		return PVCache::hasExpired($name);
+		return \PVCache::hasExpired($name);
 	}
 	
 	/**
