@@ -1,6 +1,13 @@
 <?php
+/**
+ * He2App
+ * 
+ * The main application for instantiaing the He2MVC Framework and bringing
+ * together the parts required for the system to work.
+ */
+namespace prodigyview\helium;
 
-class He2App extends PVStaticInstance {
+class He2App extends \PVStaticInstance {
 
 	protected static $_registry = null;
 
@@ -11,10 +18,8 @@ class He2App extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 		
-		spl_autoload_register('He2App::loadModels');
-		spl_autoload_register('He2App::loadComponents');
-		spl_autoload_register('He2App::loadTraits');
-		spl_autoload_register('He2App::loadServices');
+		spl_autoload_register('prodigyview\helium\He2App::loadNamespacedComponents');
+		spl_autoload_register('prodigyview\helium\He2App::loadNormalComponents');
 
 		self::_initRegistry();
 		self::_initRouter();
@@ -26,6 +31,9 @@ class He2App extends PVStaticInstance {
 		self::_notify(get_called_class() . '::' . __FUNCTION__);
 	}
 
+	/**
+	 * Will create a system wide registry that is passed to all other components
+	 */
 	protected static function _initRegistry() {
 		
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
@@ -34,7 +42,7 @@ class He2App extends PVStaticInstance {
 		/*** a new registry object ***/
 		self::$_registry = new He2Registry;
 
-		self::$_request = new PVCollection($_REQUEST);
+		self::$_request = new \PVCollection($_REQUEST);
 
 		if (isset($_POST)) {
 			self::$_registry -> post = $_POST;
@@ -56,6 +64,9 @@ class He2App extends PVStaticInstance {
 		self::_notify(get_called_class() . '::' . __FUNCTION__);
 	}
 
+	/**
+	 * Will low the router for incoming requests
+	 */
 	protected static function _initRouter() {
 		
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
@@ -72,6 +83,9 @@ class He2App extends PVStaticInstance {
 
 	}
 
+	/**
+	 * Will load the templating engine
+	 */
 	protected static function _initTemplate() {
 		
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
@@ -84,10 +98,14 @@ class He2App extends PVStaticInstance {
 		self::_notify(get_called_class() . '::' . __FUNCTION__);
 	}
 
-	public static function loadModels($class) {
+	/**
+	 * With autoload the components that are namespaced
+	 */
+	public static function loadNamespacedComponents($class) {
+		$class = str_replace('\\', '/', $class);
 		$filename = $class . '.php';
-		$file = SITE_PATH . 'models' . DS . $filename;
-
+		$file = PV_ROOT . DS. $filename;
+		
 		if (!file_exists($file)) {
 			return false;
 		}
@@ -95,7 +113,10 @@ class He2App extends PVStaticInstance {
 		return true;
 	}
 
-	public static function loadComponents($class) {
+	/**
+	 * Will autoload the components that do not have a namespace
+	 */
+	public static function loadNormalComponents($class) {
 		$filename = $class . '.php';
 		$file = SITE_PATH . 'extensions' . DS . 'components' . DS . $filename;
 
@@ -106,26 +127,5 @@ class He2App extends PVStaticInstance {
 		return true;
 	}
 
-	public static function loadTraits($class) {
-		$filename = $class . '.php';
-		$file = SITE_PATH . 'extensions' . DS . 'traits' . DS . $filename;
-
-		if (!file_exists($file)) {
-			return false;
-		}
-		require_once $file;
-		return true;
-	}
-	
-	public static function loadServices($class) {
-		$filename = $class . '.php';
-		$file = SITE_PATH . 'services' . DS . $filename;
-
-		if (!file_exists($file)) {
-			return false;
-		}
-		require_once $file;
-		return true;
-	}
 
 }
