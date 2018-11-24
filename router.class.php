@@ -1,6 +1,8 @@
 <?php
 
-class He2Router extends PVStaticInstance {
+namespace prodigyview\helium;
+
+class He2Router extends \PVStaticInstance {
 	
 	private $registry;
 
@@ -20,7 +22,7 @@ class He2Router extends PVStaticInstance {
 
 	public function setPath($path) {
 
-		if (is_dir($path) == false) {
+		if (is_dir($path) === false) {
 			throw new Exception('Invalid controller path: `' . $path . '`');
 		}
 		
@@ -39,18 +41,16 @@ class He2Router extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 		
-		$class = null;
-		
 		$this -> getController();
 
-		if (!file_exists($this -> file) || is_readable($this -> file) == false) {
+		if (!file_exists($this -> file) || is_readable($this -> file) === false) {
 			$this -> file = $this -> path . '/errorController.php';
 			@include $this -> file;
 			
 			if(class_exists('errorController')) {
 				$controller = new errorController($this -> registry);
 			} else {
-				throw new Exception("No Error Controller excist. Please create errorController.");  
+				throw new \Exception("No Error Controller exist. Please create errorController.");  
 			}
 		} else {
 			
@@ -60,7 +60,7 @@ class He2Router extends PVStaticInstance {
 			$controller = new $class($this -> registry);
 		}
 		
-		if (method_exists ( $controller , $this -> action) == false) {
+		if (method_exists ( $controller , $this -> action) === false) {
 			$action = 'error404';
 		} else {
 			$action = $this -> action;
@@ -78,9 +78,12 @@ class He2Router extends PVStaticInstance {
 			$view = $controller -> getView();
 			
 			$view_defaults = array('view' => $this->controller, 'prefix' => $this->action);
+			$controller -> cleanup();
+			
 			$view  += $view_defaults;
 			
 			$this -> registry -> template -> show($view, $template);
+			$this -> registry -> template -> cleanup();
 		}
 		
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $class, $controller, $vars);
@@ -122,12 +125,12 @@ class He2Router extends PVStaticInstance {
 
 		$rt = (isset($_GET['rt'])) ? '/'.$_GET['rt'] : null;
 		
-		PVRouter::setRoute($rt);
-		$this -> registry -> route = PVRouter::getRouteVariables();
+		\PVRouter::setRoute($rt);
+		$this -> registry -> route = \PVRouter::getRouteVariables();
 		
-		$route = PVRouter::getRoute();
-		$this -> controller = (empty($route['controller'])) ? PVRouter::getRouteVariable('controller') : $route['controller'];
-		$this -> action = (empty($route['action'])) ? PVRouter::getRouteVariable('action') : $route['action'];
+		$route = \PVRouter::getRoute();
+		$this -> controller = (empty($route['controller'])) ? \PVRouter::getRouteVariable('controller') : $route['controller'];
+		$this -> action = (empty($route['action'])) ? \PVRouter::getRouteVariable('action') : $route['action'];
 
 		if (empty($this -> controller)) {
 			$this -> controller = 'index';
@@ -146,7 +149,7 @@ class He2Router extends PVStaticInstance {
 
 }
 
-class Redirect extends PVStaticInstance {
+class Redirect extends \PVStaticInstance {
 	
 	private $url = '';
 	
@@ -181,6 +184,6 @@ class Redirect extends PVStaticInstance {
 	 */
 	public function executeRedirect() {
 		header('Location: '.$this -> url);
-		echo PVResponse::createResponse(302);
+		echo \PVResponse::createResponse(302);
 	}
 }
