@@ -1,6 +1,7 @@
 <?php
+namespace prodigyview\helium;
 
-Abstract class He2Controller extends PVStaticInstance {
+Abstract class He2Controller extends \PVStaticInstance {
 
 	protected $registry;
 	
@@ -23,7 +24,7 @@ Abstract class He2Controller extends PVStaticInstance {
 	public function __construct($registry, $configurtion = array()) {
 		$this->registry = $registry;
 		
-		$this -> request = new PVRequest();
+		$this -> request = new \PVRequest();
 		
 		$default_view = array(
 			'type' => 'html',
@@ -116,7 +117,7 @@ Abstract class He2Controller extends PVStaticInstance {
 	
 	/**
 	 * Renders the parts of the template to use a template other than 'default.html.php' file. Templates
-	 * need to reside in the define set by PV_TEMPLATE.
+	 * need to reside in the define set by \PV_TEMPLATE.
 	 * 
 	 * @param array @args The parts of the template that can be altered to change 'default.html.php'
 	 * 		'prefix' _string_: The first part of the template file before the first '.'
@@ -158,6 +159,19 @@ Abstract class He2Controller extends PVStaticInstance {
 		echo "Error 404 Page Not Found";
 		
 		exit();
+	}
+	
+	/*
+	 * After the controller class is no longer applicable, we can call a clean up to reduce
+	 * reduce resource utilization created from the template.
+	 */
+	public function cleanup() {
+		
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		
+		spl_autoload_unregister (array($this, 'controllerExtensionLoader'));
+		unset($this -> _extensions);
 	}
 	
 	
