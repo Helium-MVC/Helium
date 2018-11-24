@@ -1,6 +1,7 @@
 <?php
+namespace prodigyview\helium;
 
-Class He2Template extends PVStaticInstance {
+Class He2Template extends \PVStaticInstance {
 
 	protected $_registry;
 	protected $request;
@@ -45,6 +46,7 @@ Class He2Template extends PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $class );
 		
+		$class = str_replace('\\', '/', $class);
 		$filename = $class . '.php';
 		$file = SITE_PATH . 'extensions' . DS . 'template' . DS . $filename;
 		if (!file_exists($file)) {
@@ -121,7 +123,7 @@ Class He2Template extends PVStaticInstance {
 		$this -> _tempate_path = $path;
 		
 		if(!$template['disable'])
-			include (PV_TEMPLATES. $template['prefix'] . '.' . $template['type'] . '.' . $template['extension']);
+			include (\PV_TEMPLATES. $template['prefix'] . '.' . $template['type'] . '.' . $template['extension']);
 		
 		ob_end_flush();
 		
@@ -138,7 +140,7 @@ Class He2Template extends PVStaticInstance {
 	 */
 	protected function _displayContents($buffer) {
 		
-		return PVTemplate::updateHeader($buffer);
+		return \PVTemplate::updateHeader($buffer);
 	}
 	
 	/**
@@ -158,10 +160,10 @@ Class He2Template extends PVStaticInstance {
 		
 		$view = self::_applyFilter(get_class(), __FUNCTION__, $view, array('event' => 'args'));
 		
-		$title = PVTemplate::getSiteTitle();
+		$title = \PVTemplate::getSiteTitle();
 		
 		if(empty($title))
-			PVTemplate::setSiteTitle($view['view']. ' '. $view['prefix'] );
+			\PVTemplate::setSiteTitle($view['view']. ' '. $view['prefix'] );
 		
 	}
 
@@ -202,6 +204,21 @@ Class He2Template extends PVStaticInstance {
 		
 		return $header_placeholders;
 		
+	}
+	
+	/*
+	 * After the template class is no longer application, we can call a clean up to reduce
+	 * reduce resource utilization created from the template.
+	 */
+	public function cleanup() {
+		
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		
+		spl_autoload_unregister (array($this, 'templateExtensionLoader'));
+		unset($this -> _vars);
+		unset($this -> _registry);
+		unset($this -> request);
 	}
 
 }
