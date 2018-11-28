@@ -32,8 +32,6 @@ Abstract class He2Controller extends \PVStaticInstance {
 			'disable' => false,
 		);
 		
-		$this->_view = $default_view;
-		
 		$default_template = array(
 			'prefix' => 'default',
 			'type' => 'html',
@@ -91,6 +89,10 @@ Abstract class He2Controller extends \PVStaticInstance {
 	 * @access public
 	 */
 	public function getTemplate() {
+			
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $class );
+		
 		return $this->_template;
 	}
 	
@@ -103,6 +105,10 @@ Abstract class He2Controller extends \PVStaticInstance {
 	 * @access public
 	 */
 	public function getView() {
+		
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $class );
+		
 		return $this->_view;
 	}
 	
@@ -144,6 +150,10 @@ Abstract class He2Controller extends \PVStaticInstance {
 	 * @access public
 	 */
 	public function redirect($url, $options = array()) {
+		
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $class );
+		
 		$object = new Redirect($url, $options);
 		
 		return $object;
