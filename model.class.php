@@ -123,6 +123,7 @@ Abstract Class He2Model extends \PVStaticInstance {
 	 * @param array $options Options that be used to configure validation
 	 * 			- 'event' _array_: An array of events that validation will occur. Default is an empty
 	 * 			-'sync_data' _boolean_: If set to true, will sync the data passed to the model's collection
+	 * 			- 'display' _boolean_: If set to true, will display error message in template
 	 * 
 	 * @return boolean $validation Returns true if no errors are found, otherwise returns false
 	 * @access public
@@ -135,7 +136,7 @@ Abstract Class He2Model extends \PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $options);
 
-		$defaults = array('event' => '', 'sync_data' => true);
+		$defaults = array('event' => '', 'sync_data' => true, 'display' => true);
 
 		$options += $defaults;
 
@@ -174,7 +175,8 @@ Abstract Class He2Model extends \PVStaticInstance {
 					
 					if ($this -> _checkValidationEvent($options['event'], $rule['event'])  && !\PVValidator::check($key, @$data[$field], $rule['options'], $includes)) {
 						$hasError = false;
-						$this -> _addValidationError($field, $rule['error']);
+						
+						$this -> _addValidationError($field, $rule['error'], $options['display']);
 					}
 
 				}//end second foreach
@@ -1023,7 +1025,7 @@ Abstract Class He2Model extends \PVStaticInstance {
 	 * @return void
 	 * @access public
 	 */
-	protected function _addValidationError($field, $error_message) {
+	protected function _addValidationError($field, $error_message, $display = true) {
 			
 		if (self::_hasAdapter(get_class(), __FUNCTION__))
 			return self::_callAdapter(get_class(), __FUNCTION__, $field, $error_message);
@@ -1039,7 +1041,12 @@ Abstract Class He2Model extends \PVStaticInstance {
 		$field = $filtered['field'];
 		$error_message = $filtered['error_message'];
 		
-		$this -> _errors[$field][] = \PVTemplate::errorMessage($error_message);
+		if($display) {
+			$this -> _errors[$field][] = \PVTemplate::errorMessage($error_message);
+		} else {
+			$this -> _errors[$field][] = $error_message;
+		}
+		
 		
 		self::_notify(get_class() . '::' . __FUNCTION__, $this, $field, $error_message);
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $field, $error_message);
