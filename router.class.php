@@ -48,7 +48,7 @@ class He2Router extends \PVStaticInstance {
 			@include $this -> file;
 			
 			if(class_exists('errorController')) {
-				$controller = new errorController($this -> registry);
+				$controller = new \errorController($this -> registry);
 			} else {
 				throw new \Exception("No Error Controller exist. Please create errorController.");  
 			}
