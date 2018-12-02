@@ -66,27 +66,69 @@ class He2Router extends \PVStaticInstance {
 			$action = $this -> action;
 		}
 		
-		$vars = $controller -> $action();
+		$vars = $this -> executeControllerAction($controller, $action);
 		
 		if($vars instanceof Redirect) {
 			$vars -> executeRedirect();
 		} else {
-		
-			$this -> parseControllerVars($vars);
-			
-			$template = $controller -> getTemplate();
-			$view = $controller -> getView();
-			
-			$view_defaults = array('view' => $this->controller, 'prefix' => $this->action);
-			$controller -> cleanup();
-			
-			$view  += $view_defaults;
-			
-			$this -> registry -> template -> show($view, $template);
-			$this -> registry -> template -> cleanup();
+			$this -> renderTemplate($controller, $vars);
 		}
 		
 		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $class, $controller, $vars);
+	}
+
+	/**
+	 * Based on the parameters from the route, this function will execute the action method
+	 * in the controller
+	 * 
+	 * @param object $controller an instance of the controller object
+	 * @param string $action The action to call
+	 * 
+	 * @return mixed Either should return an array of elements from the controller, Redirect function or void
+	 */
+	public function executeControllerAction($controller, $action) {
+			
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $controller, $action);
+		
+		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array('controller' => $controller, 'action' => $action), array('event' => 'args'));
+		$controller = $filtered['controller'];
+		$action = $filtered['action'];
+			
+		return $controller -> $action();
+			
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $controller, $action);
+	}
+	
+	/**
+	 * Passses the variable from the controller into the view and then renders the
+	 * view.
+	 * 
+	 * @param array $vars Variables to be passed to the template
+	 * 
+	 * @return void
+	 */
+	public function renderTemplate($controller, $vars = array()) {
+		
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $vars);
+		
+		$vars = self::_applyFilter(get_class(), __FUNCTION__, $vars , array('event' => 'args'));
+		
+		$this -> parseControllerVars($vars);
+			
+		$template = $controller -> getTemplate();
+		$view = $controller -> getView();
+			
+		$view_defaults = array('view' => $this->controller, 'prefix' => $this->action);
+		$controller -> cleanup();
+			
+		$view  += $view_defaults;
+			
+		$this -> registry -> template -> show($view, $template);
+		$this -> registry -> template -> cleanup();
+		
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $vars);
 	}
 	
 	/**
@@ -179,11 +221,13 @@ class Redirect extends \PVStaticInstance {
 	/**
 	 * Executes the redirection request to be redirected to the appropiate url
 	 * 
+	 * @param int A Response code to execute
+	 * 
 	 * @return void
 	 * @access public
 	 */
-	public function executeRedirect() {
+	public function executeRedirect($response = 302) {
 		header('Location: '.$this -> url);
-		echo \PVResponse::createResponse(302);
+		echo \PVResponse::createResponse($response);
 	}
 }
