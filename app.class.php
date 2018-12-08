@@ -1,4 +1,7 @@
 <?php
+
+namespace prodigyview\helium;
+
 /**
  * The main application for instantiaing the He2MVC Framework and bringing
  * together the parts required for the system to work.
@@ -9,14 +12,21 @@
  * 
  * @package prodigyview\helium
  */
-namespace prodigyview\helium;
-
 class He2App extends \PVStaticInstance {
 
+	/**
+	 * The global registry 
+	 */
 	protected static $_registry = null;
 
+	/**
+	 * The request and headers for the current url
+	 */
 	protected static $_request = null;
 
+	/**
+	 * Initializes the application to start Helium
+	 */
 	public static function init() {
 		
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
@@ -104,6 +114,10 @@ class He2App extends \PVStaticInstance {
 
 	/**
 	 * With autoload the components that are namespaced
+	 * 
+	 * @param string $class The name of the class to be loaded
+	 * 
+	 * @return void
 	 */
 	public static function loadNamespacedComponents($class) {
 		$class = str_replace('\\', '/', $class);
@@ -119,6 +133,10 @@ class He2App extends \PVStaticInstance {
 
 	/**
 	 * Will autoload the components that do not have a namespace
+	 * 
+	 * @param string $class The name of the class to be loaded
+	 * 
+	 * @return void
 	 */
 	public static function loadNormalComponents($class) {
 		$filename = $class . '.php';

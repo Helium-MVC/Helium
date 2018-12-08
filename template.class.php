@@ -1,24 +1,52 @@
 <?php
+
+namespace prodigyview\helium;
+
 /**
- * 
  * This class is designed to act as the template parser that will render html found in the templates folders and the views
  * folder of each site.
  * 
  * @package prodigyview\helium
  */
-namespace prodigyview\helium;
-
 Class He2Template extends \PVStaticInstance {
 
+	/**
+	 * The global registry 
+	 */
 	protected $_registry;
+	
+	/**
+	 * The request and headers of the current page 
+	 */
 	protected $request;
+	
+	/**
+	 * The path where the template exist
+	 */
 	protected $_tempate_path;
+	
+	/**
+	 * Stored class instance to be called in the view
+	 */
 	protected $_vars = array();
+	
+	/**
+	 * The view being called
+	 */
 	protected $_view;
+	
+	/**
+	 * The template being used that wraps around the view 
+	 */
 	protected $_template;
 
 	/**
 	 * The constrcutor for the template.
+	 * 
+	 * @param object $registry The global registry object
+	 * @param PVRequests $request A requests object
+	 * 
+	 * @return void
 	 */
 	function __construct($registry = null, $request = null) {
 		
@@ -76,10 +104,25 @@ Class He2Template extends \PVStaticInstance {
 		spl_autoload_register('templateExtensionLoader');
 	}
 
+	/**
+	 * Magig function, Set an instance or string of a class to be called in the view
+	 * 
+	 * @param string $index The key to reference when calling the object
+	 * @param string $value The name of the class to call
+	 * 
+	 * @return void
+	 */
 	public function __set($index, $value) {
 		$this -> _vars[$index] = $value;
 	}
 
+	/**
+	 * Magic Function, calls the object to be used in the view or template
+	 * 
+	 * @param string $index The key of the object being called.
+	 * 
+	 * @return Object Will return an instance of an object
+	 */
 	public function __get($index) {
 		if (!isset($this -> _vars[$index]) && class_exists($index) ) {
 			$class = new $index($this -> _registry, $this -> request);
@@ -213,7 +256,7 @@ Class He2Template extends \PVStaticInstance {
 		
 	}
 	
-	/*
+	/**
 	 * After the template class is no longer application, we can call a clean up to reduce
 	 * reduce resource utilization created from the template.
 	 */

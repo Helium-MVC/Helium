@@ -1,4 +1,7 @@
 <?php
+
+namespace prodigyview\helium;
+
 /**
  * The registry acts a way to share resources across the different components through the apps execution.
  * 
@@ -7,11 +10,11 @@
  * 
  * @package prodigyview\helium
  */
-
-namespace prodigyview\helium;
-
 Class He2Registry extends \PVStaticInstance {
 
+	/**
+	 * The items stored in the registry
+	 */
 	private $vars = array();
 
 	/**

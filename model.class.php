@@ -1,17 +1,39 @@
 <?php
+namespace prodigyview\helium;
+
 /**
  * 
  * The He2Model is the ORM that interfaces with the database for the application. Models will extend He2Model
  * to gain access to its functionality.
  * 
+ * For example:
+ * 
+ * class Users extends He2Model {
+ * 		//model data
+ * }
+ * 
+ * Then you can do:
+ * 
+ * $user = new Users();
+ * $user -> create(array('email' => $email));
+ * 
  * @package prodigyview\helium
  */
-namespace prodigyview\helium;
-
 Abstract Class He2Model extends \PVStaticInstance {
 
+	/**
+	 * The registry of variables assigned to this model and stored in the database
+	 */
 	protected $registry;
+	
+	/**
+	 * Errors recored from validation
+	 */
 	protected $_errors;
+	
+	/**
+	 * Default Configuration options around the model
+	 */
 	protected $_config = array(
 		'create_table' => true, 
 		'column_check' => true,
@@ -19,7 +41,8 @@ Abstract Class He2Model extends \PVStaticInstance {
 		'storage' => '',
 		'connection' => null,
 		'cache' => false,
-		'cache_method' => null
+		'cache_method' => null,
+		'display_errors' => true,
 	);
 
 	/**
@@ -34,7 +57,7 @@ Abstract Class He2Model extends \PVStaticInstance {
 	public function __construct($data = null, array $options = array()) {
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $registry);
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $options);
 
 		$data = self::_applyFilter(get_class(), __FUNCTION__, $data, array('event' => 'args'));
 		$data = self::_applyFilter(get_called_class(), __FUNCTION__, $data, array('event' => 'args'));
@@ -53,7 +76,8 @@ Abstract Class He2Model extends \PVStaticInstance {
 			'connection' => null,
 			'table_name' => null, 
 			'cache' => false,
-			'cache_method' => null
+			'cache_method' => null,
+			'display_errors' => true,
 		);
 		
 		$this -> _config += $default_config;
@@ -142,7 +166,7 @@ Abstract Class He2Model extends \PVStaticInstance {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $options);
 
-		$defaults = array('event' => '', 'sync_data' => true, 'display' => true);
+		$defaults = array('event' => '', 'sync_data' => true, 'display' => $this -> _config['display_errors']);
 
 		$options += $defaults;
 
@@ -429,7 +453,8 @@ Abstract Class He2Model extends \PVStaticInstance {
 	/**
 	 * Deletes a value in a table or a collection based on the passed values
 	 * 
-	 * @param array $data The data in key => value format that becomes column => value format
+	 * @param array $conditions The conditions used in a delete query
+	 * @param array $options Options for configuring the connection and the delete functionality.
 	 * 
 	 * @return void
 	 * @access public
@@ -1027,6 +1052,7 @@ Abstract Class He2Model extends \PVStaticInstance {
 	 * 
 	 * @param string $field The field the error is associated with
 	 * @param string $error_message A message that describes the error
+	 * @param boolean $display Will display errors in the template automatically if set to true
 	 * 
 	 * @return void
 	 * @access public
@@ -1381,7 +1407,17 @@ Abstract Class He2Model extends \PVStaticInstance {
 		
 	}
 	/**
+	 * Returns results from a paginated query of results.
 	 * 
+	 * @param array $table The name of the table to call for pagination
+	 * @param int $current_page The page that the user or iterators is on for pagination
+	 * @param int $results_per_page The number of the results that should be returned per page
+	 * @param string $joins A join query for joining other table. Uses the models joins.
+	 * @param string $where_clause The WHERE part of the query
+	 * @param string $order_by A SQL ORDER BY clause
+	 * @param string $fields A SQL list of fields to be return
+	 * 
+	 * @return object Results from the query being generated
 	 */
 	protected function _getPaginationData($table, $current_page, $results_per_page, $joins ='',$where_clause = '', $order_by = '', $fields = '') {
 		
@@ -1394,6 +1430,7 @@ Abstract Class He2Model extends \PVStaticInstance {
 	 * 
 	 * @param string $name The key to reference the cache
 	 * @param mixed $data The data to be stored in the key
+	 * @param array $options Options to be passed to cache that relate to PVCache
 	 * 
 	 * @return boolean 
 	 * @access protected
@@ -1430,7 +1467,7 @@ Abstract Class He2Model extends \PVStaticInstance {
 	 * Creates a unique key for each query for the cache. The key is based upon the
 	 * query conditions
 	 * 
-	 * @param array $conditiions An array of sql conditions that define the query
+	 * @param array $conditions An array of sql conditions that define the query
 	 * 
 	 * @return string A unique string
 	 * @access protected
@@ -1440,23 +1477,14 @@ Abstract Class He2Model extends \PVStaticInstance {
 		
 		return md5($conditions);
 	}
-	
-	/**
-	 * @deprectated
-	 */
-	protected function _formatCacheName($args) {
-		
-		$name = '';
-		
-		if(is_array($args)) {
-				
-			foreach($args as $key => $value) {
-				
-				
-			}
-		}
-	}
 
+	/**
+	 * Converts an array of arguements into a usuable query. 
+	 * 
+	 * @param array $data The data to be converted to a query
+	 * 
+	 * @deprecated I think this functon can be removed
+	 */
 	private function convertToPVStandardSearchQuery($data) {
 		$args = array();
 		if (isset($data['conditions'])) {

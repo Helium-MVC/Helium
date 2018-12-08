@@ -1,31 +1,41 @@
 <?php
+namespace prodigyview\helium;
+
 /**
  * The controller is a class that handles the controllers functionality. All controller wille extend
  * the controller class.
  * 
  * @package prodigyview\helium
  */
-namespace prodigyview\helium;
-
 Abstract class He2Controller extends \PVStaticInstance {
 
-	//The global registry
+	/**
+	 * The global registry
+	 */
 	protected $registry;
 	
-	//Info about the view
+	/**
+	 * Info about the view
+	 */
 	protected $_view = array();
 	
-	//Info about the template
+	/**
+	 * Info about the template
+	 */
 	protected $_template = array();
 	
-	//The request information
+	/**
+	 * The request object about the page
+	 */
 	protected $request = null;
 	
-	//Extensions that can be autoloaded
+	/**
+	 *Extensions that can be autoloaded
+	 */
 	protected $_extensions = array();
 
 	/**
-	 * Instantiates that controller object and creates the default parametets for the layout and the template
+	 * Instantiates that controller object and creates the default parameters for the layout and the template.
 	 * 
 	 * @param object $registry The global registry to be passed into the class
 	 * @param array $configruation A configuration that can be used to initliziaing the controller
@@ -33,7 +43,7 @@ Abstract class He2Controller extends \PVStaticInstance {
 	 * @return void
 	 * @access public
 	 */
-	public function __construct($registry, $configurtion = array()) {
+	public function __construct($registry, $configruation = array()) {
 		$this->registry = $registry;
 		
 		$this -> request = new \PVRequest();
@@ -90,6 +100,9 @@ Abstract class He2Controller extends \PVStaticInstance {
 	 * Auto loads classes in the extensions folder. Extensions autoloaded through this function
 	 * will only be available through controllers.
 	 * 
+	 * @param string $class Th name of the class name in extensions/controllers/
+	 * 
+	 * @return void
 	 */
 	public function controllerExtensionLoader($class) {
 		
@@ -205,7 +218,7 @@ Abstract class He2Controller extends \PVStaticInstance {
 		exit();
 	}
 	
-	/*
+	/**
 	 * After the controller class is no longer applicable, we can call a clean up to reduce
 	 * reduce resource utilization created from the template.
 	 * 

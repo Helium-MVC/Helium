@@ -1,25 +1,42 @@
 <?php
+namespace prodigyview\helium;
+
 /**
- * 
  * The router class is where the applications primary execution occurs. The class will take information
  * from the router, call the correct controller and also call the correct view.
  * 
  * @package prodigyview\helium
  */
-namespace prodigyview\helium;
-
 class He2Router extends \PVStaticInstance {
 	
+	/**
+	 * The global registry 
+	 */
 	private $registry;
 
+	/**
+	 * Local path where the controllers exist
+	 */
 	private $path;
 
+	/**
+	 * Arguements returned from the view
+	 */
 	private $args = array();
 
+	/**
+	 * The file to be included as the view
+	 */
 	public $file;
 
+	/**
+	 * An instance of the controller being called
+	 */
 	public $controller;
 
+	/**
+	 * The action being executed by the controller
+	 */
 	public $action;
 
 	/**
@@ -224,6 +241,10 @@ class He2Router extends \PVStaticInstance {
  */
 class Redirect extends \PVStaticInstance {
 	
+	
+	/**
+	 * The url to be redirected too
+	 */
 	private $url = '';
 	
 	/**
