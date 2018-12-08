@@ -1,22 +1,34 @@
 <?php
+/**
+ * The controller is a class that handles the controllers functionality. All controller wille extend
+ * the controller class.
+ * 
+ * @package prodigyview\helium
+ */
 namespace prodigyview\helium;
 
 Abstract class He2Controller extends \PVStaticInstance {
 
+	//The global registry
 	protected $registry;
 	
+	//Info about the view
 	protected $_view = array();
 	
+	//Info about the template
 	protected $_template = array();
 	
+	//The request information
 	protected $request = null;
 	
+	//Extensions that can be autoloaded
 	protected $_extensions = array();
 
 	/**
 	 * Instantiates that controller object and creates the default parametets for the layout and the template
 	 * 
-	 * @param registry
+	 * @param object $registry The global registry to be passed into the class
+	 * @param array $configruation A configuration that can be used to initliziaing the controller
 	 * 
 	 * @return void
 	 * @access public
@@ -45,10 +57,26 @@ Abstract class He2Controller extends \PVStaticInstance {
 		spl_autoload_register(array($this, 'controllerExtensionLoader'));
 	}
 	
+	/**
+	 * Sets extensions that can be called. The extensions are in the extensins/controllers/ folder.
+	 * 
+	 * @param string $index The key to called the extension
+	 * @param object $value $the object stored and to be called
+	 * 
+	 * @return void
+	 */
 	public function __set($index, $value) {
 		$this -> _extensions[$index] = $value;
 	}
 
+	/**
+	 * The magic method for retrieving an extension object and return
+	 * the instantiated object in the functionn being called in the controller.
+	 * 
+	 * @param string $index The key references the autoloaded object
+	 * 
+	 * @return object
+	 */
 	public function __get($index) {
 		if (!isset($this -> _extensions[$index]) && class_exists($index) ) {
 			$class = new $index();
@@ -74,11 +102,6 @@ Abstract class He2Controller extends \PVStaticInstance {
 			return false;
 		}
 		require_once $file;
-	}
-
-	protected function getModel($model_name){
-		include(__SITE_PATH . 'model/'.$model_name.'.php');
-		return new $model_name($this->registry);
 	}
 	
 	/**
@@ -115,6 +138,15 @@ Abstract class He2Controller extends \PVStaticInstance {
 	/**
 	 * Changes the view that will be used by the controller. The view can only be changed by the controller or a child class
 	 * of the controller. The default view is the child's controller's method name followed by '.html.php'.
+	 * 
+	 * @param array $args Arguements that can be used to modify the view in key value format. The arguements can be:
+	 * 				-  'prefix': The name of the file to load. The default is the action of the contoller
+	 * 				- 'type': The second value, for example changing the default html type to json
+					- 'extension' The extension of the file. Default is php but can be anything.
+	 * 				- 'disabled' _boolean_: Default value is set to false, but if set to true, no view will be displayed
+	 * 
+	 * @return void
+	 * @access public
 	 */
 	protected function _renderView(array $args = array()) {
 		$args += $this -> _view;
@@ -161,6 +193,8 @@ Abstract class He2Controller extends \PVStaticInstance {
 	
 	/**
 	 * Implementing default behavior to execute when a page is not found. Can be overrided using inheritance
+	 * 
+	 * @return void
 	 */
 	public function error404() {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
@@ -174,6 +208,8 @@ Abstract class He2Controller extends \PVStaticInstance {
 	/*
 	 * After the controller class is no longer applicable, we can call a clean up to reduce
 	 * reduce resource utilization created from the template.
+	 * 
+	 * @return void
 	 */
 	public function cleanup() {
 		

@@ -1,4 +1,11 @@
 <?php
+/**
+ * 
+ * This class is designed to act as the template parser that will render html found in the templates folders and the views
+ * folder of each site.
+ * 
+ * @package prodigyview\helium
+ */
 namespace prodigyview\helium;
 
 Class He2Template extends \PVStaticInstance {

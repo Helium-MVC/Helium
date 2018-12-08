@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * 
+ * The He2Model is the ORM that interfaces with the database for the application. Models will extend He2Model
+ * to gain access to its functionality.
+ * 
+ * @package prodigyview\helium
+ */
 namespace prodigyview\helium;
 
 Abstract Class He2Model extends \PVStaticInstance {

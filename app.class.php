@@ -1,9 +1,13 @@
 <?php
 /**
- * He2App
- * 
  * The main application for instantiaing the He2MVC Framework and bringing
  * together the parts required for the system to work.
+ * 
+ * The application is what is called with Helium is first initiliaed in the frontend controller. It will autoload the components,
+ * set the registry and then send the application into the router. The boostrap of the framework should be called sometime during
+ * this point.
+ * 
+ * @package prodigyview\helium
  */
 namespace prodigyview\helium;
 

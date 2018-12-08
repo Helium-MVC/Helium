@@ -1,4 +1,12 @@
 <?php
+/**
+ * Executed when the command line is called in Helium and extends PHP CLI.
+ * 
+ * Many of Heliums sites will have a helium.php file within their root directory. The file
+ * is normally called by invoking php /path/to/site/helium.php
+ * 
+ * @package prodigyview\helium
+ */
 namespace prodigyview\helium;
 
 use prodigyview\helium\He2App;
@@ -58,6 +66,14 @@ class HeliumConsole extends He2App {
 
 	}
 
+	/**
+	 * The autoload for finding a class in the cli folder
+	 * and executing it based on the arguements passed.
+	 * 
+	 * @param string $class The name of the class
+	 * 
+	 * @return void
+	 */
 	public static function loadCommandLine($class) {
 
 		$filename = $class . '.php';
