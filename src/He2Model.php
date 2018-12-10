@@ -19,7 +19,7 @@ namespace prodigyview\helium;
  *
  * @package prodigyview\helium
  */
-Abstract Class He2Model extends \PVStaticInstance {
+Abstract class He2Model extends \PVStaticInstance {
 
 	/**
 	 * The registry of variables assigned to this model and stored in the database

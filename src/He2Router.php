@@ -61,7 +61,7 @@ class He2Router extends \PVStaticInstance {
 	public function setPath($path) {
 
 		if (is_dir($path) === false) {
-			throw new Exception('Invalid controller path: `' . $path . '`');
+			throw new \Exception('Invalid controller path: `' . $path . '`');
 		}
 
 		$this->path = $path;
