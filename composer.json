@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-0": {
-            "prodigyview\helium\\": "src/"
+            "prodigyview\\helium\\": "src/"
         }
     }
 }
