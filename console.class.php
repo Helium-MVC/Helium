@@ -6,17 +6,17 @@ use prodigyview\helium\He2App;
 /**
  * The main application for instantiaing the He2MVC Framework and bringing
  * together the parts required for the system to work.
- * 
- * The application is what is called with Helium is first initiliaed in the frontend controller. It will autoload the components,
- * set the registry and then send the application into the router. The boostrap of the framework should be called sometime during
- * this point.
- * 
+ *
+ * The application is what is called with Helium is first initiliaed in the frontend controller. It
+ * will autoload the components, set the registry and then send the application into the router. The boostrap 
+ * of the framework should be called sometime during this point.
+ *
  * @package prodigyview\helium
  */
 class HeliumConsole extends He2App {
 
 	/**
-	 * The global registry 
+	 * The global registry
 	 */
 	protected static $_registry = null;
 
@@ -49,29 +49,33 @@ class HeliumConsole extends He2App {
 
 		self::_notify(get_called_class() . '::' . __FUNCTION__);
 
-
 		$args = \PVCli::parse($argv = null);
-		
-		if($args[0] == 'controller') {
-			$controller = $args['controller'].'Controller.php';
-	
-			$class = $args['controller'].'Controller';
+
+		if ($args[0] == 'controller') {
 			
+			$controller = $args['controller'] . 'Controller.php';
+
+			$class = $args['controller'] . 'Controller';
+
 			$action = (isset($args['action'])) ? $args['action'] : 'index';
-			
-			include(SITE_PATH . '/controllers'.DS. $controller);
-			
-			$object = new $class(array(), array());
-			
-			$object -> $action();
-			
+
+			include (SITE_PATH . '/controllers' . DS . $controller);
+
+			$object = new $class( array(), array());
+
+			$object->$action();
+
 		} else {
+			
 			$class = array_shift($args);
 			$object = new $class();
-			
-			if(isset($args[0])) {
+
+			if (isset($args[0])) {
 				$function = array_shift($args);
-				call_user_func_array(array($object,$function), $args);
+				call_user_func_array(array(
+					$object,
+					$function
+				), $args);
 			}
 		}
 
@@ -80,9 +84,9 @@ class HeliumConsole extends He2App {
 	/**
 	 * The autoload for finding a class in the cli folder
 	 * and executing it based on the arguements passed.
-	 * 
+	 *
 	 * @param string $class The name of the class
-	 * 
+	 *
 	 * @return void
 	 */
 	public static function loadCommandLine($class) {
