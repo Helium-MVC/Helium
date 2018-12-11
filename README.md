@@ -1,6 +1,6 @@
 # Helium MVC - The Framework For Startups
 
-##### Helium is a framework that is addressing two problems:
+### Helium is a framework that is addressing two problems:
 
 **A)** Development for startups involves rapid prototyping and MVPs in very short time periods to deliver production-ready solutions within a week to a month. If done incorrectly, it will create very high technical debt and make a business harder to scale.
 
@@ -13,7 +13,7 @@ In response, I wanted to develop a solution with enough structure to make code e
 
 If you want to install a few packages to create a product quickly in a cookie cutter approach, **this framework is NOT for you**. Helium (He2MVC) is a minimalist framework that focuses on giving the developer a few guidelines and the freedom to explore and "innovate" (for better or for worse). This means it is your choice if you want to use Factories, Facades, Dependency Injection or whichever approach you like. 
 
-##### This Framework Is For Developers Who:
+#### This Framework Is For Developers Who:
 
 - Developers that learn rules and conventions, only to break them
 - Developers that want sites to load in 100ms to 500ms without cache(my record is 93ms)
