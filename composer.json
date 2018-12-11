@@ -1,15 +1,15 @@
 {
-    "name": "prodigyview/helium",
+    "name": "helium-mvc/helium",
     "type": "library",
-    "description": "Light weight MVC built using ProdigyView",
-    "keywords": ["mvc","php"],
-    "homepage": "https://github.com/ProdigyView/Helium",
+    "description": "The Development Framework For Startups",
+    "keywords": ["mvc","php", "framework"],
+    "homepage": "https://github.com/Helium-MVC/Helium",
     "license": "MIT",
     "authors": [
         {
             "name": "Devin Dixon",
-            "email": "ddixon@prodigyview.com",
-            "homepage": "http://www.prodigyview.com",
+            "email": "ddixon@bingewave.com",
+            "homepage": "http://www.bingewave.com",
             "role": "Entrepreneur & Developer"
         }
     ],
