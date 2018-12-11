@@ -27,16 +27,16 @@ If you want to install a few packages to create a product quickly in a cookie cu
 #### Understanding Helium
 Helium comes with a lot of educational material to help developers get started quickly and to explore different ways of solving problems. In addition to these docs, you can reference:
 
-The Blog: https://medium.com/helium-mvc
-Functional Examples: https://github.com/Helium-MVC/Examples
-Online Documentation: https://medium.com/helium-mvc
+- The Blog: https://medium.com/helium-mvc
+- Functional Examples: https://github.com/Helium-MVC/Examples
+- Online Documentation: https://medium.com/helium-mvc
 
 #### Understanding ProdigyView
 Helium is a fully functional framework that is only 7 files. How is that possible? A lot of what Helium builds upon is a PHP Toolkit called ProdigyView. ProdigyView does not have a structure but provides tools to make anything.
 
-Examples: https://github.com/ProdigyView/ProdigyView-Examples
-Documentation: https://prodigyview.github.io/ProdigyView-Docs/
-Well Documented Code: https://github.com/ProdigyView/ProdigyView-Core
+- Examples: https://github.com/ProdigyView/ProdigyView-Examples
+- Documentation: https://prodigyview.github.io/ProdigyView-Docs/
+- Well Documented Code: https://github.com/ProdigyView/ProdigyView-Core
 
 ## Getting Started
 To get started, please head over the Boilerplate. This is a base site accompanied with a how-to guide to get you going: https://github.com/Helium-MVC/Boilerplate
