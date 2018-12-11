@@ -34,9 +34,9 @@ Helium comes with a lot of educational material to help developers get started q
 #### Understanding ProdigyView
 Helium is a fully functional framework that is only 7 files. How is that possible? A lot of what Helium builds upon is a PHP Toolkit called ProdigyView. ProdigyView does not have a structure but provides tools to make anything.
 
-- Examples: https://github.com/ProdigyView/ProdigyView-Examples
-- Documentation: https://prodigyview.github.io/ProdigyView-Docs/
-- Well Documented Code: https://github.com/ProdigyView/ProdigyView-Core
+- Examples: https://github.com/ProdigyView-Toolkit/examples
+- Documentation: https://prodigyview-toolkit.github.io/docs/
+- Well Documented Code: https://github.com/ProdigyView-Toolkit/prodigyview
 
 ## Getting Started
 To get started, please head over the Boilerplate. This is a base site accompanied with a how-to guide to get you going: https://github.com/Helium-MVC/Boilerplate
