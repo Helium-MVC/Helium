@@ -31,7 +31,6 @@ class HeliumConsole extends He2App {
 	public static function init() {
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 
 		spl_autoload_register('prodigyview\helium\He2App::loadNamespacedComponents');
@@ -90,6 +89,9 @@ class HeliumConsole extends He2App {
 	 * @return void
 	 */
 	public static function loadCommandLine($class) {
+			
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $class);
 
 		$filename = $class . '.php';
 

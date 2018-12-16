@@ -127,7 +127,7 @@ Abstract class He2Controller extends \PVStaticInstance {
 	public function getTemplate() {
 			
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $class );
+			return self::_callAdapter(get_called_class(), __FUNCTION__);
 		
 		return $this->_template;
 	}
@@ -143,7 +143,7 @@ Abstract class He2Controller extends \PVStaticInstance {
 	public function getView() {
 		
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $class );
+			return self::_callAdapter(get_called_class(), __FUNCTION__);
 		
 		return $this->_view;
 	}
@@ -197,7 +197,7 @@ Abstract class He2Controller extends \PVStaticInstance {
 	public function redirect($url, $options = array()) {
 		
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $class );
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $url, $options );
 		
 		$object = new Redirect($url, $options);
 		
@@ -211,7 +211,7 @@ Abstract class He2Controller extends \PVStaticInstance {
 	 */
 	public function error404() {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $class );
+			return self::_callAdapter(get_called_class(), __FUNCTION__);
 		
 		echo "Error 404 Page Not Found";
 		

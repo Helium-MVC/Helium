@@ -59,12 +59,17 @@ class He2Router extends \PVStaticInstance {
 	 * @return void
 	 */
 	public function setPath($path) {
+		
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $path);
 
 		if (is_dir($path) === false) {
 			throw new \Exception('Invalid controller path: `' . $path . '`');
 		}
 
 		$this->path = $path;
+		
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $path);
 	}
 
 	/**
@@ -158,7 +163,7 @@ class He2Router extends \PVStaticInstance {
 	public function renderTemplate($controller, $vars = array()) {
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $vars);
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $controller, $vars);
 
 		$vars = self::_applyFilter(get_class(), __FUNCTION__, $vars, array('event' => 'args'));
 
@@ -178,7 +183,7 @@ class He2Router extends \PVStaticInstance {
 		$this->registry->template->show($view, $template);
 		$this->registry->template->cleanup();
 
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $vars);
+		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $controller, $vars);
 	}
 
 	/**
@@ -283,6 +288,12 @@ class Redirect extends \PVStaticInstance {
 	 * @access public
 	 */
 	public function executeRedirect($response = 302) {
+		
+		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
+			return self::_callAdapter(get_called_class(), __FUNCTION__, $response);
+		
+		$response = self::_applyFilter(get_class(), __FUNCTION__, $response, array('event' => 'args'));
+		
 		header('Location: ' . $this->url);
 		echo \PVResponse::createResponse($response);
 	}
