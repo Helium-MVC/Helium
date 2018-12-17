@@ -23,6 +23,9 @@ If you want to install a few packages to create a product quickly in a cookie cu
 - Developers that like Dragon Ball, Dragon Ball Z, Dragon Ball Super or Dragon Ball TFS Abridged
 - Developers with a sense of humor
 
+## Getting Started
+To get started, please head over the Boilerplate. This is a base site accompanied with a how-to guide to get you going: https://github.com/Helium-MVC/Boilerplate
+
 ## Educational Material
 #### Understanding Helium
 Helium comes with a lot of educational material to help developers get started quickly and to explore different ways of solving problems. In addition to these docs, you can reference:
@@ -38,8 +41,14 @@ Helium is a fully functional framework that is only 7 files. How is that possibl
 - Documentation: https://prodigyview-toolkit.github.io/docs/
 - Well Documented Code: https://github.com/ProdigyView-Toolkit/prodigyview
 
-## Getting Started
-To get started, please head over the Boilerplate. This is a base site accompanied with a how-to guide to get you going: https://github.com/Helium-MVC/Boilerplate
+### Development Principles
+
+For hardcore developers that focus on IoC, S.O.L.I.D and other principles, this section is for you. As you get started with Helium, it is good to understand some of the principles behind the framework.
+
+1.  [A New Approach To Inversion of Control ](https://medium.com/helium-mvc/a-new-approach-to-inversion-of-control-with-prodigyview-e15a34cff0d "A New Approach To Inversion of Control ")
+2. [Programming Principles For Early Stage Startups](https://medium.com/helium-mvc/programming-principles-for-early-stage-startups-1215ad14bcb8 "Programming Principles For Early Stage Startups")
+3. [How Helium and ProdigyView Is Designed For Startups](https://medium.com/helium-mvc/how-helium-and-prodigyview-is-designed-for-startups-a0e4c53edd32 "How Helium and ProdigyView Is Designed For Startups")
+4.  [Debunking The Myth Of Static Classes, Methods and Variables](https://medium.com/helium-mvc/debunking-the-myth-of-static-classes-methods-and-variables-8059472a1bc7 "Debunking The Myth Of Static Classes, Methods and Variables")
 
 ## Help Developing Helium
 

@@ -143,6 +143,7 @@ class He2Router extends \PVStaticInstance {
 			'controller' => $controller,
 			'action' => $action
 		), array('event' => 'args'));
+		
 		$controller = $filtered['controller'];
 		$action = $filtered['action'];
 
