@@ -2,13 +2,18 @@
 
 namespace prodigyview\helium;
 
+use prodigyview\design\StaticInstance;
+use prodigyview\template\Template;
+
 /**
  * This class is designed to act as the template parser that will render html found in the templates
  * folders and the views folder of each site.
  *
  * @package prodigyview\helium
  */
-Class He2Template extends \PVStaticInstance {
+Class He2Template {
+	
+	use StaticInstance;
 
 	/**
 	 * The global registry
@@ -44,7 +49,7 @@ Class He2Template extends \PVStaticInstance {
 	 * The constrcutor for the template.
 	 *
 	 * @param object $registry The global registry object
-	 * @param PVRequests $request A requests object
+	 * @param Requests $request A requests object
 	 *
 	 * @return void
 	 */
@@ -200,7 +205,7 @@ Class He2Template extends \PVStaticInstance {
 		$this->_tempate_path = $path;
 
 		if (!$template['disable'])
-			include (\PV_TEMPLATES . $template['prefix'] . '.' . $template['type'] . '.' . $template['extension']);
+			include (PV_TEMPLATES . $template['prefix'] . '.' . $template['type'] . '.' . $template['extension']);
 
 		ob_end_flush();
 
@@ -218,7 +223,7 @@ Class He2Template extends \PVStaticInstance {
 	 */
 	protected function _displayContents($buffer) {
 
-		return \PVTemplate::updateHeader($buffer);
+		return Template::updateHeader($buffer);
 	}
 
 	/**
@@ -238,10 +243,10 @@ Class He2Template extends \PVStaticInstance {
 
 		$view = self::_applyFilter(get_class(), __FUNCTION__, $view, array('event' => 'args'));
 
-		$title = \PVTemplate::getSiteTitle();
+		$title = Template::getSiteTitle();
 
 		if (empty($title))
-			\PVTemplate::setSiteTitle($view['view'] . ' ' . $view['prefix']);
+			Template::setSiteTitle($view['view'] . ' ' . $view['prefix']);
 
 	}
 

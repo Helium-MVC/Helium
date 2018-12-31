@@ -2,6 +2,8 @@
 
 namespace prodigyview\helium;
 
+use prodigyview\design\StaticInstance;
+
 /**
  * The registry acts a way to share resources across the different components through the apps
  * execution.
@@ -11,7 +13,9 @@ namespace prodigyview\helium;
  *
  * @package prodigyview\helium
  */
-Class He2Registry extends \PVStaticInstance {
+Class He2Registry {
+	
+	use StaticInstance;
 
 	/**
 	 * The items stored in the registry

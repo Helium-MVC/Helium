@@ -2,6 +2,9 @@
 
 namespace prodigyview\helium;
 
+use prodigyview\design\Collection;
+use prodigyview\design\StaticInstance;
+
 /**
  * The main application for instantiaing the He2MVC Framework and bringing
  * together the parts required for the system to work.
@@ -12,8 +15,10 @@ namespace prodigyview\helium;
  *
  * @package prodigyview\helium
  */
-class He2App extends \PVStaticInstance {
+class He2App {
 
+	use StaticInstance;
+	
 	/**
 	 * The global registry
 	 */
@@ -56,7 +61,7 @@ class He2App extends \PVStaticInstance {
 		/*** a new registry object ***/
 		self::$_registry = new He2Registry;
 
-		self::$_request = new \PVCollection($_REQUEST);
+		self::$_request = new Collection($_REQUEST);
 
 		if (isset($_POST)) {
 			self::$_registry->post = $_POST;

@@ -1,14 +1,19 @@
 <?php
 namespace prodigyview\helium;
 
+use prodigyview\design\StaticInstance;
+use prodigyview\network\Request;
+
 /**
  * The controller is a class that handles the controllers functionality. All controller wille extend
  * the controller class.
  * 
  * @package prodigyview\helium
  */
-Abstract class He2Controller extends \PVStaticInstance {
+Abstract class He2Controller {
 
+	use StaticInstance;
+	
 	/**
 	 * The global registry
 	 */
@@ -46,7 +51,7 @@ Abstract class He2Controller extends \PVStaticInstance {
 	public function __construct($registry, $configruation = array()) {
 		$this->registry = $registry;
 		
-		$this -> request = new \PVRequest();
+		$this -> request = new Request();
 		
 		$default_view = array(
 			'type' => 'html',

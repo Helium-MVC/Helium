@@ -1,13 +1,18 @@
 <?php
 namespace prodigyview\helium;
 
+use prodigyview\network\Router;
+use prodigyview\design\StaticInstance;
+
 /**
  * The router class is where the applications primary execution occurs. The class will take
  * information from the router, call the correct controller and also call the correct view.
  *
  * @package prodigyview\helium
  */
-class He2Router extends \PVStaticInstance {
+class He2Router {
+	
+	use StaticInstance;
 
 	/**
 	 * The global registry
@@ -143,7 +148,6 @@ class He2Router extends \PVStaticInstance {
 			'controller' => $controller,
 			'action' => $action
 		), array('event' => 'args'));
-		
 		$controller = $filtered['controller'];
 		$action = $filtered['action'];
 
@@ -223,12 +227,12 @@ class He2Router extends \PVStaticInstance {
 
 		$rt = (isset($_GET['rt'])) ? '/' . $_GET['rt'] : null;
 
-		\PVRouter::setRoute($rt);
-		$this->registry->route = \PVRouter::getRouteVariables();
+		Router::setRoute($rt);
+		$this->registry->route = Router::getRouteVariables();
 
-		$route = \PVRouter::getRoute();
-		$this->controller = (empty($route['controller'])) ? \PVRouter::getRouteVariable('controller') : $route['controller'];
-		$this->action = (empty($route['action'])) ? \PVRouter::getRouteVariable('action') : $route['action'];
+		$route = Router::getRoute();
+		$this->controller = (empty($route['controller'])) ? Router::getRouteVariable('controller') : $route['controller'];
+		$this->action = (empty($route['action'])) ? Router::getRouteVariable('action') : $route['action'];
 
 		if (empty($this->controller)) {
 			$this->controller = 'index';
@@ -250,8 +254,9 @@ class He2Router extends \PVStaticInstance {
  *
  * @package prodigyview\helium
  */
-class Redirect extends \PVStaticInstance {
+class Redirect {
 
+	use StaticInstance;
 	/**
 	 * The url to be redirected too
 	 */
@@ -296,7 +301,7 @@ class Redirect extends \PVStaticInstance {
 		$response = self::_applyFilter(get_class(), __FUNCTION__, $response, array('event' => 'args'));
 		
 		header('Location: ' . $this->url);
-		echo \PVResponse::createResponse($response);
+		echo \Response::createResponse($response);
 	}
 
 }

@@ -2,6 +2,7 @@
 namespace prodigyview\helium;
 
 use prodigyview\helium\He2App;
+use prodigyview\util\Cli;
 
 /**
  * The main application for instantiaing the He2MVC Framework and bringing
@@ -48,7 +49,7 @@ class HeliumConsole extends He2App {
 
 		self::_notify(get_called_class() . '::' . __FUNCTION__);
 
-		$args = \PVCli::parse($argv = null);
+		$args = Cli::parse($argv = null);
 
 		if ($args[0] == 'controller') {
 			
