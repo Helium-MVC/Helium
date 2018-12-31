@@ -4,7 +4,7 @@
 
 **A)** Development for startups involves rapid prototyping and MVPs in very short time periods to deliver production-ready solutions within a week to a month. If done incorrectly, it will create very high technical debt and make a business harder to scale.
 
-**B)** A lot of development has become cookie-cutter. The industry flocks to the same methodologies, rules, and techniques with less understanding of the why and how. Coding is the ability to be creative and explore as one builds.
+**B)** A lot of development has become cookie-cutter with frameworks forcing you to abide by their rules that may not fit your development sprints. Coding is the ability to be creative and explore as one builds, and the developer should tell the framework how to work, not the other way around.
 
 In response, I wanted to develop a solution with enough structure to make code easy to maintain, flexibility to respond to crazy demands quickly while allowing the freedom and creativity to do things your way. All these elements are competing interests.
 
@@ -15,6 +15,7 @@ If you want to install a few packages to create a product quickly in a cookie cu
 
 #### This Framework Is For Developers Who:
 
+- Developers that want more control over their architecture and design pattern choices
 - Developers that learn rules and conventions, only to break them
 - Developers that want sites to load in 100ms to 500ms without cache(my record is 93ms)
 - Developers that like to try new technologies and want to explore
