@@ -2,6 +2,7 @@
 namespace prodigyview\helium;
 
 use prodigyview\network\Router;
+use prodigyview\network\Response;
 use prodigyview\design\StaticInstance;
 
 /**
@@ -301,7 +302,7 @@ class Redirect {
 		$response = self::_applyFilter(get_class(), __FUNCTION__, $response, array('event' => 'args'));
 		
 		header('Location: ' . $this->url);
-		echo \Response::createResponse($response);
+		echo Response::createResponse($response);
 	}
 
 }
