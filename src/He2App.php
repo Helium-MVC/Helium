@@ -2,7 +2,7 @@
 
 namespace prodigyview\helium;
 
-use prodigyview\design\Collection;
+use prodigyview\util\Collection;
 use prodigyview\design\StaticInstance;
 
 /**

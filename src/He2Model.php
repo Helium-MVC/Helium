@@ -2,7 +2,7 @@
 namespace prodigyview\helium;
 
 use prodigyview\design\StaticInstance;
-use prodigyview\design\Collection;
+use prodigyview\util\Collection;
 use prodigyview\template\Template;
 use prodigyview\util\Tools;
 use prodigyview\util\Cache;
