@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>    API Documentation &raquo; \prodigyview\helium\He2Template
+</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+            <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+            <!--[if lt IE 9]>
+        <script src="https://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+        <![endif]-->
+        <script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script>
+        <script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
+        <script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script>
+        <script src="../js/bootstrap.js" type="text/javascript"></script>
+        <script src="../js/template.js" type="text/javascript"></script>
+        <script src="../js/prettify/prettify.min.js" type="text/javascript"></script>
+    
+            <link rel="shortcut icon" href="../img/favicon.ico"/>
+        <link rel="apple-touch-icon" href="../img/apple-touch-icon.png"/>
+        <link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png"/>
+        <link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png"/>
+    </head>
+<body>
+
+        <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span> <span class="icon-bar"></span>
+                    <span class="icon-bar"></span> </a>
+                <a class="brand" href="../index.html">API Documentation</a>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li class="dropdown">
+                            <a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                API Documentation <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                                                    <li><a>Namespaces</a></li>
+                                                                        <li><a href="../namespaces/prodigyview.html">prodigyview</a></li>
+                                                                                                                                </ul>
+                        </li>
+                        <li class="dropdown" id="charts-menu">
+                            <a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                Charts <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="../graph_class.html">
+                                        <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown" id="reports-menu">
+                            <a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                Reports <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="../errors.html">
+                                        <i class="icon-list-alt"></i>&#160;Errors
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../markers.html">
+                                        <i class="icon-list-alt"></i>&#160;Markers
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../deprecated.html">
+                                        <i class="icon-list-alt"></i>&#160;Deprecated
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="go_to_top">
+            <a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>
+        </div>
+    </div>
+    
+    <div id="___" class="container">
+        <noscript>
+            <div class="alert alert-warning">
+                Javascript is disabled; several features are only available if Javascript is enabled.
+            </div>
+        </noscript>
+
+        
+            <style>
+        .deprecated h2 {
+            text-decoration: line-through;
+        }
+    </style>
+    <div class="row">
+        <div class="span4">
+                    <div class="btn-group view pull-right" data-toggle="buttons-radio">
+        <button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button>
+        <button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+    </div>
+    <div class="btn-group visibility" data-toggle="buttons-checkbox">
+        <button class="btn public active" title="Show public elements">Public</button>
+        <button class="btn protected" title="Show protected elements">Protected</button>
+        <button class="btn private" title="Show private elements">Private</button>
+        <button class="btn inherited active" title="Show inherited elements">Inherited</button>
+    </div>
+
+        <ul class="side-nav nav nav-list">
+        <li class="nav-header">
+            <i class="icon-custom icon-method"></i> Methods
+            <ul>
+                                                                                                    <li class="method public">
+        <a href="#method___construct" title="__construct :: The constrcutor for the template.">
+            <span class="description">The constrcutor for the template.</span><pre>__construct</pre>
+        </a>
+    </li>
+
+                                                                                                        <li class="method public">
+        <a href="#method___get" title="__get :: Magic Function, calls the object to be used in the view or template">
+            <span class="description">Magic Function, calls the object to be used in the view or template</span><pre>__get</pre>
+        </a>
+    </li>
+
+                                                                                                        <li class="method public">
+        <a href="#method___set" title="__set :: Magig function, Set an instance or string of a class to be called in the view">
+            <span class="description">Magig function, Set an instance or string of a class to be called in the view</span><pre>__set</pre>
+        </a>
+    </li>
+
+                                                                                                                                                                                                                        <li class="method public">
+        <a href="#method_cleanup" title="cleanup :: After the template class is no longer application, we can call a clean up to reduce
+reduce resource utilization created from the template.">
+            <span class="description">After the template class is no longer application, we can call a clean up to reduce
+reduce resource utilization created from the template.</span><pre>cleanup</pre>
+        </a>
+    </li>
+
+                                                                                                        <li class="method public">
+        <a href="#method_content" title="content :: Displays the content in a view that will render in a template. Call this function once in the
+template folder.">
+            <span class="description">Displays the content in a view that will render in a template. Call this function once in the
+template folder.</span><pre>content</pre>
+        </a>
+    </li>
+
+                                                                                                        <li class="method public">
+        <a href="#method_header" title="header :: Returns the header to be placed at the top of a template. The header contains tags that will be
+replaced
+at the end of output buffering with the site&#039;s title, meta descriptiong, keywords, and additional
+javascript
+libraries. This method should be called between the &lt;head&gt;&lt;/head&gt; tags in your template file.">
+            <span class="description">Returns the header to be placed at the top of a template. The header contains tags that will be
+replaced
+at the end of output buffering with the site&#039;s title, meta descriptiong, keywords, and additional
+javascript
+libraries. This method should be called between the &lt;head&gt;&lt;/head&gt; tags in your template file.</span><pre>header</pre>
+        </a>
+    </li>
+
+                                                                                                        <li class="method public">
+        <a href="#method_loadTemplateExtensions" title="loadTemplateExtensions :: Register an spl auto loader for helper files that will become part of the template">
+            <span class="description">Register an spl auto loader for helper files that will become part of the template</span><pre>loadTemplateExtensions</pre>
+        </a>
+    </li>
+
+                                                                                                        <li class="method public">
+        <a href="#method_show" title="show :: Includes the view that will be displayed.">
+            <span class="description">Includes the view that will be displayed.</span><pre>show</pre>
+        </a>
+    </li>
+
+                                                                                                        <li class="method public">
+        <a href="#method_templateExtensionLoader" title="templateExtensionLoader :: Loads classes in the extensions/template folder. The files become helpers in the view.">
+            <span class="description">Loads classes in the extensions/template folder. The files become helpers in the view.</span><pre>templateExtensionLoader</pre>
+        </a>
+    </li>
+
+                                                </ul>
+        </li>
+        <li class="nav-header protected">» Protected
+            <ul>
+                                                                                                                                                                                        <li class="method protected">
+                            <a href="#method__displayContents" title="_displayContents :: Takes the content from the output buffer, and runs it through the updateHeader function, This will
+replace
+the tags in the header and input javascript and css that has been enqueed in the library.">
+                                <span class="description">Takes the content from the output buffer, and runs it through the updateHeader function, This will
+replace
+the tags in the header and input javascript and css that has been enqueed in the library.</span><pre>_displayContents</pre>
+                            </a>
+                        </li>
+                                                                                <li class="method protected">
+                            <a href="#method__titleCheck" title="_titleCheck :: Peforms a final check on the header to ensure that the site title
+has been site. If it has not, it will set it automatically. The $view that is passed in is an
+array that contains information about the entire view.">
+                                <span class="description">Peforms a final check on the header to ensure that the site title
+has been site. If it has not, it will set it automatically. The $view that is passed in is an
+array that contains information about the entire view.</span><pre>_titleCheck</pre>
+                            </a>
+                        </li>
+                                                                                                                                                                                                                                                                        </ul>
+        </li>
+        <li class="nav-header private">» Private
+            <ul>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </ul>
+        </li>
+        <li class="nav-header">
+            <i class="icon-custom icon-constant"></i> Constants
+            <ul>
+                            </ul>
+        </li>
+    </ul>
+
+
+        </div>
+
+        <div class="span8">
+            <div class="element class">
+                <h1>He2Template</h1>
+                <small style="display: block; text-align: right">
+                                                        </small>
+                <p class="short_description">This class is designed to act as the template parser that will render html found in the templates
+folders and the views folder of each site.</p>
+                <div class="details">
+                    <div class="long_description">
+                        
+                    </div>
+                    <table class="table table-bordered">
+                                                                                    <tr>
+                                    <th>
+                                        package
+                                                                            </th>
+                                    <td>
+                                                                                    
+                                                                                <p>prodigyview\helium</p>
+                                    </td>
+                                </tr>
+                                                                                                                                                                                </table>
+
+                    <h3><i class="icon-custom icon-method"></i> Methods</h3>
+                                                                <a id="method___construct"></a>
+                        <div class="element clickable method public  method___construct" data-toggle="collapse" data-target=".method___construct .collapse">
+                            <h2>The constrcutor for the template.</h2>
+                            <pre>__construct(object $registry = null, \prodigyview\helium\Requests $request = null) : void</pre>
+                            <div class="labels">
+                                                                                                                                                                                            </div>
+
+                            
+                            <div class="row collapse">
+                                <div class="detail-description">
+                                    <div class="long_description"></div>
+
+                                    <table class="table">
+                                                                                                                    </table>
+
+                                                                            <h3>Arguments</h3>
+                                                                                    <div class="subelement argument">
+                                                <h4>$registry</h4>
+                                                <code>object</code><p><p>The global registry object</p></p>
+                                            </div>
+                                                                                    <div class="subelement argument">
+                                                <h4>$request</h4>
+                                                <code>\prodigyview\helium\Requests</code><p><p>A requests object</p></p>
+                                            </div>
+                                                                            
+                                                                    </div>
+                            </div>
+
+                        </div>
+                                            <a id="method___get"></a>
+                        <div class="element clickable method public  method___get" data-toggle="collapse" data-target=".method___get .collapse">
+                            <h2>Magic Function, calls the object to be used in the view or template</h2>
+                            <pre>__get(string $index) : Object</pre>
+                            <div class="labels">
+                                                                                                                                                                                            </div>
+
+                            
+                            <div class="row collapse">
+                                <div class="detail-description">
+                                    <div class="long_description"></div>
+
+                                    <table class="table">
+                                                                                                                    </table>
+
+                                                                            <h3>Arguments</h3>
+                                                                                    <div class="subelement argument">
+                                                <h4>$index</h4>
+                                                <code>string</code><p><p>The key of the object being called.</p></p>
+                                            </div>
+                                                                            
+                                                                            <h3>Response</h3>
+                                        <code>Object</code><p><p>Will return an instance of an object</p></p>
+                                                                    </div>
+                            </div>
+
+                        </div>
+                                            <a id="method___set"></a>
+                        <div class="element clickable method public  method___set" data-toggle="collapse" data-target=".method___set .collapse">
+                            <h2>Magig function, Set an instance or string of a class to be called in the view</h2>
+                            <pre>__set(string $index, string $value) : void</pre>
+                            <div class="labels">
+                                                                                                                                                                                            </div>
+
+                            
+                            <div class="row collapse">
+                                <div class="detail-description">
+                                    <div class="long_description"></div>
+
+                                    <table class="table">
+                                                                                                                    </table>
+
+                                                                            <h3>Arguments</h3>
+                                                                                    <div class="subelement argument">
+                                                <h4>$index</h4>
+                                                <code>string</code><p><p>The key to reference when calling the object</p></p>
+                                            </div>
+                                                                                    <div class="subelement argument">
+                                                <h4>$value</h4>
+                                                <code>string</code><p><p>The name of the class to call</p></p>
+                                            </div>
+                                                                            
+                                                                    </div>
+                            </div>
+
+                        </div>
+                                            <a id="method__displayContents"></a>
+                        <div class="element clickable method protected  method__displayContents" data-toggle="collapse" data-target=".method__displayContents .collapse">
+                            <h2>Takes the content from the output buffer, and runs it through the updateHeader function, This will
+replace
+the tags in the header and input javascript and css that has been enqueed in the library.</h2>
+                            <pre>_displayContents(string $buffer) : string</pre>
+                            <div class="labels">
+                                                                                                                                                                                            </div>
+
+                            
+                            <div class="row collapse">
+                                <div class="detail-description">
+                                    <div class="long_description"></div>
+
+                                    <table class="table">
+                                                                                    <tr>
+                                                <th>
+                                                    access
+                                                </th>
+                                                <td>
+                                                                                                                                                                        
+                                                                                                                                                                        <p>protected</p>
+                                                                                                    </td>
+                                            </tr>
+                                                                                                                    </table>
+
+                                                                            <h3>Arguments</h3>
+                                                                                    <div class="subelement argument">
+                                                <h4>$buffer</h4>
+                                                <code>string</code><p><p>The buffer from the ob_start</p></p>
+                                            </div>
+                                                                            
+                                                                            <h3>Response</h3>
+                                        <code>string</code><p><p>$buffer The buffer to display</p></p>
+                                                                    </div>
+                            </div>
+
+                        </div>
+                                            <a id="method__titleCheck"></a>
+                        <div class="element clickable method protected  method__titleCheck" data-toggle="collapse" data-target=".method__titleCheck .collapse">
+                            <h2>Peforms a final check on the header to ensure that the site title
+has been site. If it has not, it will set it automatically. The $view that is passed in is an
+array that contains information about the entire view.</h2>
+                            <pre>_titleCheck(array $view) : void</pre>
+                            <div class="labels">
+                                                                                                                                                                                            </div>
+
+                            
+                            <div class="row collapse">
+                                <div class="detail-description">
+                                    <div class="long_description"></div>
+
+                                    <table class="table">
+                                                                                    <tr>
+                                                <th>
+                                                    access
+                                                </th>
+                                                <td>
+                                                                                                                                                                        
+                                                                                                                                                                        <p>protected</p>
+                                                                                                    </td>
+                                            </tr>
+                                                                                                                    </table>
+
+                                                                            <h3>Arguments</h3>
+                                                                                    <div class="subelement argument">
+                                                <h4>$view</h4>
+                                                <code>array</code><p><p>An array that contains the information about the view to be displayed</p></p>
+                                            </div>
+                                                                            
+                                                                    </div>
+                            </div>
+
+                        </div>
+                                            <a id="method_cleanup"></a>
+                        <div class="element clickable method public  method_cleanup" data-toggle="collapse" data-target=".method_cleanup .collapse">
+                            <h2>After the template class is no longer application, we can call a clean up to reduce
+reduce resource utilization created from the template.</h2>
+                            <pre>cleanup() </pre>
+                            <div class="labels">
+                                                                                                                                                                                            </div>
+
+                            
+                            <div class="row collapse">
+                                <div class="detail-description">
+                                    <div class="long_description"></div>
+
+                                    <table class="table">
+                                                                                    <tr>
+                                                <th>
+                                                    
+                                                </th>
+                                                <td>
+                                                                                                    </td>
+                                            </tr>
+                                                                                    <tr>
+                                                <th>
+                                                    
+                                                </th>
+                                                <td>
+                                                                                                    </td>
+                                            </tr>
+                                                                                                                    </table>
+
+                                    
+                                                                    </div>
+                            </div>
+
+                        </div>
+                                            <a id="method_content"></a>
+                        <div class="element clickable method public  method_content" data-toggle="collapse" data-target=".method_content .collapse">
+                            <h2>Displays the content in a view that will render in a template. Call this function once in the
+template folder.</h2>
+                            <pre>content() : void</pre>
+                            <div class="labels">
+                                                                                                                                                                                            </div>
+
+                            
+                            <div class="row collapse">
+                                <div class="detail-description">
+                                    <div class="long_description"></div>
+
+                                    <table class="table">
+                                                                                    <tr>
+                                                <th>
+                                                    access
+                                                </th>
+                                                <td>
+                                                                                                                                                                        
+                                                                                                                                                                        <p>public</p>
+                                                                                                    </td>
+                                            </tr>
+                                                                                    <tr>
+                                                <th>
+                                                    
+                                                </th>
+                                                <td>
+                                                                                                    </td>
+                                            </tr>
+                                                                                                                    </table>
+
+                                    
+                                                                    </div>
+                            </div>
+
+                        </div>
+                                            <a id="method_header"></a>
+                        <div class="element clickable method public  method_header" data-toggle="collapse" data-target=".method_header .collapse">
+                            <h2>Returns the header to be placed at the top of a template. The header contains tags that will be
+replaced
+at the end of output buffering with the site&#039;s title, meta descriptiong, keywords, and additional
+javascript
+libraries. This method should be called between the &lt;head&gt;&lt;/head&gt; tags in your template file.</h2>
+                            <pre>header() : string</pre>
+                            <div class="labels">
+                                                                                                                                                                                            </div>
+
+                            
+                            <div class="row collapse">
+                                <div class="detail-description">
+                                    <div class="long_description"></div>
+
+                                    <table class="table">
+                                                                                    <tr>
+                                                <th>
+                                                    access
+                                                </th>
+                                                <td>
+                                                                                                                                                                        
+                                                                                                                                                                        <p>public</p>
+                                                                                                    </td>
+                                            </tr>
+                                                                                    <tr>
+                                                <th>
+                                                    
+                                                </th>
+                                                <td>
+                                                                                                    </td>
+                                            </tr>
+                                                                                                                    </table>
+
+                                    
+                                                                            <h3>Response</h3>
+                                        <code>string</code><p><p>$tags Returns a string of tags that will be placed at the top of the header</p></p>
+                                                                    </div>
+                            </div>
+
+                        </div>
+                                            <a id="method_loadTemplateExtensions"></a>
+                        <div class="element clickable method public  method_loadTemplateExtensions" data-toggle="collapse" data-target=".method_loadTemplateExtensions .collapse">
+                            <h2>Register an spl auto loader for helper files that will become part of the template</h2>
+                            <pre>loadTemplateExtensions() : void</pre>
+                            <div class="labels">
+                                                                                                                                                                                            </div>
+
+                            
+                            <div class="row collapse">
+                                <div class="detail-description">
+                                    <div class="long_description"></div>
+
+                                    <table class="table">
+                                                                                    <tr>
+                                                <th>
+                                                    access
+                                                </th>
+                                                <td>
+                                                                                                                                                                        
+                                                                                                                                                                        <p>public</p>
+                                                                                                    </td>
+                                            </tr>
+                                                                                    <tr>
+                                                <th>
+                                                    
+                                                </th>
+                                                <td>
+                                                                                                    </td>
+                                            </tr>
+                                                                                                                    </table>
+
+                                    
+                                                                    </div>
+                            </div>
+
+                        </div>
+                                            <a id="method_show"></a>
+                        <div class="element clickable method public  method_show" data-toggle="collapse" data-target=".method_show .collapse">
+                            <h2>Includes the view that will be displayed.</h2>
+                            <pre>show(array $view, array $template) </pre>
+                            <div class="labels">
+                                                                                                                                                                                            </div>
+
+                            
+                            <div class="row collapse">
+                                <div class="detail-description">
+                                    <div class="long_description"></div>
+
+                                    <table class="table">
+                                                                                    <tr>
+                                                <th>
+                                                    
+                                                </th>
+                                                <td>
+                                                                                                    </td>
+                                            </tr>
+                                                                                                                    </table>
+
+                                                                            <h3>Arguments</h3>
+                                                                                    <div class="subelement argument">
+                                                <h4>$view</h4>
+                                                <code>array</code><p><p>Contains the arguements that define the view that will be displayed.
+-'view' <em>string</em>: The folder that the view will reside in
+-'prefix' <em>string</em>: The first part of the view. If the view is add.html.php, the add would be
+the prefix. Default value is index
+-'type' <em>string</em>: The format for the view. The default is html.
+-'exenstion' <em>string</em>: The extension of the view. The default extension is .php</p></p>
+                                            </div>
+                                                                                    <div class="subelement argument">
+                                                <h4>$template</h4>
+                                                <code>array</code><p><p>Contains the arguements that define the template that will be displayed
+-'prefix' <em>string</em>: The first part of the template. The default value for the prefix is
+'default'
+-'type' <em>string</em>: The</p></p>
+                                            </div>
+                                                                            
+                                                                    </div>
+                            </div>
+
+                        </div>
+                                            <a id="method_templateExtensionLoader"></a>
+                        <div class="element clickable method public  method_templateExtensionLoader" data-toggle="collapse" data-target=".method_templateExtensionLoader .collapse">
+                            <h2>Loads classes in the extensions/template folder. The files become helpers in the view.</h2>
+                            <pre>templateExtensionLoader(string $class) : void</pre>
+                            <div class="labels">
+                                                                                                                                                                                            </div>
+
+                            
+                            <div class="row collapse">
+                                <div class="detail-description">
+                                    <div class="long_description"></div>
+
+                                    <table class="table">
+                                                                                    <tr>
+                                                <th>
+                                                    access
+                                                </th>
+                                                <td>
+                                                                                                                                                                        
+                                                                                                                                                                        <p>public</p>
+                                                                                                    </td>
+                                            </tr>
+                                                                                                                    </table>
+
+                                                                            <h3>Arguments</h3>
+                                                                                    <div class="subelement argument">
+                                                <h4>$class</h4>
+                                                <code>string</code><p><p>Name of the class to include</p></p>
+                                            </div>
+                                                                            
+                                                                    </div>
+                            </div>
+
+                        </div>
+                    
+                    
+                                                                <h3><i class="icon-custom icon-property"></i> Properties</h3>
+                                                    <a id="property__registry"> </a>
+                            <div class="element clickable property  protected property__registry" data-toggle="collapse" data-target=".property__registry .collapse">
+                                <h2>The global registry</h2>
+                                <pre>_registry : </pre>
+                                <div class="labels">
+                                                                                                        </div>
+                                <div class="row collapse">
+                                    <div class="detail-description">
+                                        <div class="long_description"></div>
+
+                                        <table class="table">
+                                                                                            <tr>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <td>
+                                                                                                            </td>
+                                                </tr>
+                                                                                    </table>
+
+                                                                                    <h3>Type(s)</h3>
+                                            <code></code>
+                                                                            </div>
+                                </div>
+                            </div>
+                                                    <a id="property_request"> </a>
+                            <div class="element clickable property  protected property_request" data-toggle="collapse" data-target=".property_request .collapse">
+                                <h2>The request and headers of the current page</h2>
+                                <pre>request : </pre>
+                                <div class="labels">
+                                                                                                        </div>
+                                <div class="row collapse">
+                                    <div class="detail-description">
+                                        <div class="long_description"></div>
+
+                                        <table class="table">
+                                                                                            <tr>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <td>
+                                                                                                            </td>
+                                                </tr>
+                                                                                    </table>
+
+                                                                                    <h3>Type(s)</h3>
+                                            <code></code>
+                                                                            </div>
+                                </div>
+                            </div>
+                                                    <a id="property__tempate_path"> </a>
+                            <div class="element clickable property  protected property__tempate_path" data-toggle="collapse" data-target=".property__tempate_path .collapse">
+                                <h2>The path where the template exist</h2>
+                                <pre>_tempate_path : </pre>
+                                <div class="labels">
+                                                                                                        </div>
+                                <div class="row collapse">
+                                    <div class="detail-description">
+                                        <div class="long_description"></div>
+
+                                        <table class="table">
+                                                                                            <tr>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <td>
+                                                                                                            </td>
+                                                </tr>
+                                                                                    </table>
+
+                                                                                    <h3>Type(s)</h3>
+                                            <code></code>
+                                                                            </div>
+                                </div>
+                            </div>
+                                                    <a id="property__vars"> </a>
+                            <div class="element clickable property  protected property__vars" data-toggle="collapse" data-target=".property__vars .collapse">
+                                <h2>Stored class instance to be called in the view</h2>
+                                <pre>_vars : </pre>
+                                <div class="labels">
+                                                                                                        </div>
+                                <div class="row collapse">
+                                    <div class="detail-description">
+                                        <div class="long_description"></div>
+
+                                        <table class="table">
+                                                                                            <tr>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <td>
+                                                                                                            </td>
+                                                </tr>
+                                                                                    </table>
+
+                                                                                    <h3>Type(s)</h3>
+                                            <code></code>
+                                                                            </div>
+                                </div>
+                            </div>
+                                                    <a id="property__view"> </a>
+                            <div class="element clickable property  protected property__view" data-toggle="collapse" data-target=".property__view .collapse">
+                                <h2>The view being called</h2>
+                                <pre>_view : </pre>
+                                <div class="labels">
+                                                                                                        </div>
+                                <div class="row collapse">
+                                    <div class="detail-description">
+                                        <div class="long_description"></div>
+
+                                        <table class="table">
+                                                                                            <tr>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <td>
+                                                                                                            </td>
+                                                </tr>
+                                                                                    </table>
+
+                                                                                    <h3>Type(s)</h3>
+                                            <code></code>
+                                                                            </div>
+                                </div>
+                            </div>
+                                                    <a id="property__template"> </a>
+                            <div class="element clickable property  protected property__template" data-toggle="collapse" data-target=".property__template .collapse">
+                                <h2>The template being used that wraps around the view</h2>
+                                <pre>_template : </pre>
+                                <div class="labels">
+                                                                                                        </div>
+                                <div class="row collapse">
+                                    <div class="detail-description">
+                                        <div class="long_description"></div>
+
+                                        <table class="table">
+                                                                                            <tr>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <td>
+                                                                                                            </td>
+                                                </tr>
+                                                                                    </table>
+
+                                                                                    <h3>Type(s)</h3>
+                                            <code></code>
+                                                                            </div>
+                                </div>
+                            </div>
+                                                            </div>
+            </div>
+            <a id="\prodigyview\helium\He2Template"></a>
+            <ul class="breadcrumb">
+                <li><a href="../index.html"><i class="icon-custom icon-class"></i></a></li>
+                    
+    
+    <li><span class="divider">\</span><a href="../namespaces/prodigyview.helium.html">helium</a></li>
+
+                <li class="active"><span class="divider">\</span><a href="../classes/prodigyview.helium.He2Template.html">He2Template</a></li>
+            </ul>
+        </div>
+    </div>
+
+    </div>
+
+        <footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by
+            <a href="http://glyphicons.com/">Glyphicons</a>.<br/>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and<br/>
+            generated on Tue, 01 Jan 2019 18:00:34 +0000.<br/>
+    </footer>
+    </body>
+</html>
