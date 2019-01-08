@@ -226,7 +226,7 @@ class He2Router {
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
 
-		$rt = (isset($_GET['rt'])) ? '/' . $_GET['rt'] : null;
+		$rt = (isset($_GET['rt'])) ? '/' . $_GET['rt'] : '';
 
 		Router::setRoute($rt);
 		$this->registry->route = Router::getRouteVariables();
