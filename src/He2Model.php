@@ -8,7 +8,7 @@ use prodigyview\util\Tools;
 use prodigyview\util\Cache;
 use prodigyview\util\Conversions;
 use prodigyview\util\Validator;
-use prodigyview\system\Database;
+use prodigyview\database\Database;
 
 /**
  *
@@ -697,7 +697,7 @@ Abstract class He2Model {
 			}
 			
 			$args['join'] = $query;
-			$result = Database::selectPreparedStatement($args, $options);
+			$result = Database::preparedSelectStatement($args, $options);
 			$row = Database::fetchArray($result);
 
 			if (!empty($row)) {
@@ -842,7 +842,7 @@ Abstract class He2Model {
 				$args['offset'] = $pagination['start_location'];
 			}
 
-			$result = Database::selectPreparedStatement($args, $options);
+			$result = Database::preparedSelectStatement($args, $options);
 		}
 
 		$this->_processResults($result, $options, $cache_name);
