@@ -381,7 +381,7 @@ Abstract class He2Model {
 				$created = true;
 			}
 		}
-
+		
 		$this->_resetConnection();
 
 		if ($created === true && $auto_incremented_field) {
