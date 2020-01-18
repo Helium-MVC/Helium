@@ -29,7 +29,15 @@ class HeliumConsole extends He2App {
 	/**
 	 * Initializes the console and looks for commands to run.
 	 */
-	public static function init() {
+	public static function init($options = array()) {
+
+		$defaults = array(
+			'load_routing' => true,
+			'load_registry' => true,
+			'load_templating' => true,
+		);
+
+		$options += $defaults;
 
 		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
 			return self::_callAdapter(get_called_class(), __FUNCTION__);
@@ -39,11 +47,17 @@ class HeliumConsole extends He2App {
 
 		spl_autoload_register('prodigyview\helium\HeliumConsole::loadCommandLine');
 
-		self::_initRegistry();
+		if($options['load_registry']) {
+			self::_initRegistry();
+		}
 
-		self::_initRouter();
+		if($options['load_routing']) {
+			self::_initRouter();
+		}
 
-		self::_initTemplate();
+		if($options['load_templating']) {
+			self::_initTemplate();
+		}
 
 		self::_notify(get_class() . '::' . __FUNCTION__);
 
@@ -51,7 +65,7 @@ class HeliumConsole extends He2App {
 
 		$args = Cli::parse($argv = null);
 
-		if ($args[0] == 'controller') {
+		if (isset($args[0]) && $args[0] == 'controller') {
 			
 			$controller = $args['controller'] . 'Controller.php';
 
@@ -65,17 +79,20 @@ class HeliumConsole extends He2App {
 
 			$object->$action();
 
-		} else {
+		} else if($args) {
 			
 			$class = array_shift($args);
-			$object = new $class();
 
-			if (isset($args[0])) {
-				$function = array_shift($args);
-				call_user_func_array(array(
-					$object,
-					$function
-				), $args);
+			if(class_exists($class)) {
+				$object = new $class();
+
+				if (isset($args[0])) {
+					$function = array_shift($args);
+					call_user_func_array(array(
+						$object,
+						$function
+					), $args);
+				}
 			}
 		}
 
