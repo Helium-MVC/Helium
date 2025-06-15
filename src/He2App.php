@@ -34,8 +34,8 @@ class He2App {
 	 */
 	public static function init() {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		spl_autoload_register('prodigyview\helium\He2App::loadNamespacedComponents');
 		spl_autoload_register('prodigyview\helium\He2App::loadNormalComponents');
@@ -46,8 +46,8 @@ class He2App {
 
 		self::$_registry->router->loader();
 
-		self::_notify(get_class() . '::' . __FUNCTION__);
-		self::_notify(get_called_class() . '::' . __FUNCTION__);
+		self::_notify(self::class . '::' . __FUNCTION__);
+		self::_notify(static::class . '::' . __FUNCTION__);
 	}
 
 	/**
@@ -55,8 +55,8 @@ class He2App {
 	 */
 	protected static function _initRegistry() {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		/*** a new registry object ***/
 		self::$_registry = new He2Registry;
@@ -79,8 +79,8 @@ class He2App {
 			self::$_registry->files = $_FILES;
 		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__);
-		self::_notify(get_called_class() . '::' . __FUNCTION__);
+		self::_notify(self::class . '::' . __FUNCTION__);
+		self::_notify(static::class . '::' . __FUNCTION__);
 	}
 
 	/**
@@ -88,8 +88,8 @@ class He2App {
 	 */
 	protected static function _initRouter() {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		/*** load the router ***/
 		self::$_registry->router = new He2Router(self::$_registry);
@@ -97,8 +97,8 @@ class He2App {
 		/*** set the controller path ***/
 		self::$_registry->router->setPath(SITE_PATH . '/controllers');
 
-		self::_notify(get_class() . '::' . __FUNCTION__);
-		self::_notify(get_called_class() . '::' . __FUNCTION__);
+		self::_notify(self::class . '::' . __FUNCTION__);
+		self::_notify(static::class . '::' . __FUNCTION__);
 
 	}
 
@@ -107,14 +107,14 @@ class He2App {
 	 */
 	protected static function _initTemplate() {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		/*** load up the template ***/
 		self::$_registry->template = new He2Template(self::$_registry, self::$_request);
 
-		self::_notify(get_class() . '::' . __FUNCTION__);
-		self::_notify(get_called_class() . '::' . __FUNCTION__);
+		self::_notify(self::class . '::' . __FUNCTION__);
+		self::_notify(static::class . '::' . __FUNCTION__);
 	}
 
 	/**

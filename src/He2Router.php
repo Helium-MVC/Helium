@@ -66,8 +66,8 @@ class He2Router {
 	 */
 	public function setPath($path) {
 		
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $path);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $path);
 
 		if (is_dir($path) === false) {
 			throw new \Exception('Invalid controller path: `' . $path . '`');
@@ -75,7 +75,7 @@ class He2Router {
 
 		$this->path = $path;
 		
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $path);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $path);
 	}
 
 	/**
@@ -87,8 +87,8 @@ class He2Router {
 	 */
 	public function loader() {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		$class = null;
 
@@ -127,7 +127,7 @@ class He2Router {
 			$this->renderTemplate($controller, $vars);
 		}
 
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $class, $controller, $vars);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $class, $controller, $vars);
 	}
 
 	/**
@@ -142,10 +142,10 @@ class He2Router {
 	 */
 	public function executeControllerAction($controller, $action) {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $controller, $action);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $controller, $action);
 
-		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(self::class, __FUNCTION__, array(
 			'controller' => $controller,
 			'action' => $action
 		), array('event' => 'args'));
@@ -154,7 +154,7 @@ class He2Router {
 
 		return $controller->$action();
 
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $controller, $action);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $controller, $action);
 	}
 
 	/**
@@ -168,10 +168,10 @@ class He2Router {
 	 */
 	public function renderTemplate($controller, $vars = array()) {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $controller, $vars);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $controller, $vars);
 
-		$vars = self::_applyFilter(get_class(), __FUNCTION__, $vars, array('event' => 'args'));
+		$vars = self::_applyFilter(self::class, __FUNCTION__, $vars, array('event' => 'args'));
 
 		$this->parseControllerVars($vars);
 
@@ -189,7 +189,7 @@ class He2Router {
 		$this->registry->template->show($view, $template);
 		$this->registry->template->cleanup();
 
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $controller, $vars);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $controller, $vars);
 	}
 
 	/**
@@ -203,10 +203,10 @@ class He2Router {
 	 */
 	private function parseControllerVars($vars) {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $vars);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $vars);
 
-		$vars = self::_applyFilter(get_class(), __FUNCTION__, $vars, array('event' => 'args'));
+		$vars = self::_applyFilter(self::class, __FUNCTION__, $vars, array('event' => 'args'));
 
 		if (is_array($vars)) {
 			foreach ($vars as $key => $value) {
@@ -223,8 +223,8 @@ class He2Router {
 	 */
 	private function getController() {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		$rt = (isset($_GET['rt'])) ? '/' . $_GET['rt'] : '';
 
@@ -245,7 +245,7 @@ class He2Router {
 
 		$this->file = $this->path . '/' . $this->controller . 'Controller.php';
 
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $route, $rt);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $route, $rt);
 	}
 
 }
@@ -296,10 +296,10 @@ class Redirect {
 	 */
 	public function executeRedirect($response = 302) {
 		
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $response);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $response);
 		
-		$response = self::_applyFilter(get_class(), __FUNCTION__, $response, array('event' => 'args'));
+		$response = self::_applyFilter(self::class, __FUNCTION__, $response, array('event' => 'args'));
 		
 		header('Location: ' . $this->url);
 		echo Response::createResponse($response);

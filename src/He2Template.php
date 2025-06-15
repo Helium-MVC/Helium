@@ -55,10 +55,10 @@ Class He2Template {
 	 */
 	function __construct($registry = null, $request = null) {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $registry, $request);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $registry, $request);
 
-		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(self::class, __FUNCTION__, array(
 			'registry' => $registry,
 			'request' => $request
 		), array('event' => 'args'));
@@ -66,7 +66,7 @@ Class He2Template {
 		$registry = $filtered['registry'];
 		$request = $filtered['request'];
 
-		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(static::class, __FUNCTION__, array(
 			'registry' => $registry,
 			'request' => $request
 		), array('event' => 'args'));
@@ -94,8 +94,8 @@ Class He2Template {
 	 */
 	public function templateExtensionLoader($class) {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $class);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $class);
 
 		$class = str_replace('\\', '/', $class);
 		$filename = $class . '.php';
@@ -116,8 +116,8 @@ Class He2Template {
 	 */
 	function loadTemplateExtensions() {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		spl_autoload_register('templateExtensionLoader');
 	}
@@ -168,10 +168,10 @@ Class He2Template {
 	 */
 	public function show($view, $template) {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $view, $template);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $view, $template);
 
-		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(self::class, __FUNCTION__, array(
 			'view' => $view,
 			'template' => $template
 		), array('event' => 'args'));
@@ -179,7 +179,7 @@ Class He2Template {
 		$view = $filtered['view'];
 		$template = $filtered['template'];
 
-		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(static::class, __FUNCTION__, array(
 			'view' => $view,
 			'template' => $template
 		), array('event' => 'args'));
@@ -238,10 +238,10 @@ Class He2Template {
 	 */
 	protected function _titleCheck($view) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $view);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__, $view);
 
-		$view = self::_applyFilter(get_class(), __FUNCTION__, $view, array('event' => 'args'));
+		$view = self::_applyFilter(self::class, __FUNCTION__, $view, array('event' => 'args'));
 
 		$title = Template::getSiteTitle();
 
@@ -259,8 +259,8 @@ Class He2Template {
 	 */
 	public function content() {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		foreach ($this->_vars as $key => $value) {
 			$$key = $value;
@@ -281,12 +281,12 @@ Class He2Template {
 	 */
 	public function header() {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		$header_placeholders = '<title>{SITE_TITLE}</title>{HEADER_ADDITION}';
 
-		$header_placeholders = self::_applyFilter(get_class(), __FUNCTION__, $header_placeholders, array('event' => 'return'));
+		$header_placeholders = self::_applyFilter(self::class, __FUNCTION__, $header_placeholders, array('event' => 'return'));
 
 		return $header_placeholders;
 
@@ -298,8 +298,8 @@ Class He2Template {
 	 */
 	public function cleanup() {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		spl_autoload_unregister(array(
 			$this,

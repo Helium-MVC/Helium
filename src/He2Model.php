@@ -67,11 +67,11 @@ Abstract class He2Model {
 	 */
 	public function __construct($data = null, array $options = array()) {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $options);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $data, $options);
 
-		$data = self::_applyFilter(get_class(), __FUNCTION__, $data, array('event' => 'args'));
-		$data = self::_applyFilter(get_called_class(), __FUNCTION__, $data, array('event' => 'args'));
+		$data = self::_applyFilter(self::class, __FUNCTION__, $data, array('event' => 'args'));
+		$data = self::_applyFilter(static::class, __FUNCTION__, $data, array('event' => 'args'));
 
 		$this->registry = new Collection();
 
@@ -93,8 +93,8 @@ Abstract class He2Model {
 
 		$this->_config += $default_config;
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $data);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $data);
+		self::_notify(self::class . '::' . __FUNCTION__, $this, $data);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $data);
 
 	}
 
@@ -112,11 +112,11 @@ Abstract class He2Model {
 	 */
 	public function checkSchema($force_check = false) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		$this->_setConnection();
 
@@ -173,11 +173,11 @@ Abstract class He2Model {
 	 */
 	public function validate($data, $options = array()) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $data, $options);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__, $data, $options);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $options);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $data, $options);
 
 		$defaults = array(
 			'event' => '',
@@ -187,7 +187,7 @@ Abstract class He2Model {
 
 		$options += $defaults;
 
-		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(self::class, __FUNCTION__, array(
 			'data' => $data,
 			'options' => $options
 		), array('event' => 'args'));
@@ -195,7 +195,7 @@ Abstract class He2Model {
 		$data = $filtered['data'];
 		$options = $filtered['options'];
 
-		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(static::class, __FUNCTION__, array(
 			'data' => $data,
 			'options' => $options
 		), array('event' => 'args'));
@@ -247,8 +247,8 @@ Abstract class He2Model {
 
 		$this->registry->errors = $this->_errors;
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $hasError, $data);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $hasError, $data);
+		self::_notify(self::class . '::' . __FUNCTION__, $this, $hasError, $data);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $hasError, $data);
 
 		return $hasError;
 	}//end validate
@@ -278,11 +278,11 @@ Abstract class He2Model {
 	 */
 	public function create(array $data, array $options = array()) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $data, $options);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__, $data, $options);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $options);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $data, $options);
 
 		$this->_setConnection();
 
@@ -296,7 +296,7 @@ Abstract class He2Model {
 		
 		$options += $defaults;
 
-		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(self::class, __FUNCTION__, array(
 			'data' => $data,
 			'options' => $options
 		), array('event' => 'args'));
@@ -304,7 +304,7 @@ Abstract class He2Model {
 		$data = $filtered['data'];
 		$options = $filtered['options'];
 
-		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(static::class, __FUNCTION__, array(
 			'data' => $data,
 			'options' => $options
 		), array('event' => 'args'));
@@ -392,8 +392,8 @@ Abstract class He2Model {
 			$this->first($conditions);
 		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $created, $id, $parameter_data, $options);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $created, $id, $parameter_data, $options);
+		self::_notify(self::class . '::' . __FUNCTION__, $this, $created, $id, $parameter_data, $options);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $created, $id, $parameter_data, $options);
 
 		return $created;
 	}
@@ -416,11 +416,11 @@ Abstract class He2Model {
 	 */
 	public function update(array $data = array(), array $conditions = array(), array $options = array()) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $data, $conditions, $options);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__, $data, $conditions, $options);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $conditions, $options);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $data, $conditions, $options);
 
 		$this->_setConnection();
 
@@ -433,7 +433,7 @@ Abstract class He2Model {
 		
 		$options += $defaults;
 
-		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(self::class, __FUNCTION__, array(
 			'data' => $data,
 			'conditions' => $conditions,
 			'options' => $options
@@ -443,7 +443,7 @@ Abstract class He2Model {
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 
-		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(static::class, __FUNCTION__, array(
 			'data' => $data,
 			'conditions' => $conditions,
 			'options' => $options
@@ -509,8 +509,8 @@ Abstract class He2Model {
 			$this->sync();
 		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $parameter_data, $conditions, $options);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $parameter_data, $conditions, $options);
+		self::_notify(self::class . '::' . __FUNCTION__, $this, $result, $parameter_data, $conditions, $options);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $result, $parameter_data, $conditions, $options);
 
 		return $result;
 	}//end update
@@ -527,15 +527,15 @@ Abstract class He2Model {
 	 */
 	public function delete($conditions, array $options = array()) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $conditions, $options);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__, $conditions, $options);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $conditions, $options);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $conditions, $options);
 
 		$this->_setConnection();
 
-		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(self::class, __FUNCTION__, array(
 			'conditions' => $conditions,
 			'options' => $options
 		), array('event' => 'args'));
@@ -543,7 +543,7 @@ Abstract class He2Model {
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 
-		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(static::class, __FUNCTION__, array(
 			'conditions' => $conditions,
 			'options' => $options
 		), array('event' => 'args'));
@@ -569,8 +569,8 @@ Abstract class He2Model {
 
 		$this->_resetConnection();
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
+		self::_notify(self::class . '::' . __FUNCTION__, $this, $result, $conditions, $options);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $result, $conditions, $options);
 
 		return $result;
 	}//end delete
@@ -597,15 +597,15 @@ Abstract class He2Model {
 	 */
 	public function first($conditions = array(), $options = array()) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $conditions, $options);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__, $conditions, $options);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $conditions, $options);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $conditions, $options);
 
 		$this->_setConnection();
 
-		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(self::class, __FUNCTION__, array(
 			'conditions' => $conditions,
 			'options' => $options
 		), array('event' => 'args'));
@@ -613,7 +613,7 @@ Abstract class He2Model {
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 
-		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(static::class, __FUNCTION__, array(
 			'conditions' => $conditions,
 			'options' => $options
 		), array('event' => 'args'));
@@ -719,8 +719,8 @@ Abstract class He2Model {
 
 		$this->_resetConnection();
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $result, $conditions, $options);
+		self::_notify(self::class . '::' . __FUNCTION__, $this, $result, $conditions, $options);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $result, $conditions, $options);
 	}
 
 	/**
@@ -751,15 +751,15 @@ Abstract class He2Model {
 	 */
 	public function find($conditions = array(), array $options = array()) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $conditions, $options);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__, $conditions, $options);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $conditions, $options);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $conditions, $options);
 
 		$this->_setConnection();
 
-		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(self::class, __FUNCTION__, array(
 			'conditions' => $conditions,
 			'options' => $options
 		), array('event' => 'args'));
@@ -767,7 +767,7 @@ Abstract class He2Model {
 		$conditions = $filtered['conditions'];
 		$options = $filtered['options'];
 
-		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(static::class, __FUNCTION__, array(
 			'conditions' => $conditions,
 			'options' => $options
 		), array('event' => 'args'));
@@ -849,8 +849,8 @@ Abstract class He2Model {
 
 		$this->_resetConnection();
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $conditions);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $conditions);
+		self::_notify(self::class . '::' . __FUNCTION__, $this, $conditions);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $conditions);
 	}
 
 	/**
@@ -864,11 +864,11 @@ Abstract class He2Model {
 	 */
 	public function sync() {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		if (!isset($this->_schema)) {
 			return false;
@@ -900,11 +900,11 @@ Abstract class He2Model {
 	 */
 	public function error($error_name) {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $error_name);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $error_name);
 
-		$error_name = self::_applyFilter(get_class(), __FUNCTION__, $error_name, array('event' => 'args'));
-		$error_name = self::_applyFilter(get_called_class(), __FUNCTION__, $error_name, array('event' => 'args'));
+		$error_name = self::_applyFilter(self::class, __FUNCTION__, $error_name, array('event' => 'args'));
+		$error_name = self::_applyFilter(static::class, __FUNCTION__, $error_name, array('event' => 'args'));
 		$output = '';
 
 		if (isset($this->_errors[$error_name])) {
@@ -968,11 +968,11 @@ Abstract class He2Model {
 	 */
 	protected function _joinTable($args = array()) {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $args);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $args);
 
-		$args = self::_applyFilter(get_class(), __FUNCTION__, $args, array('event' => 'args'));
-		$args = self::_applyFilter(get_called_class(), __FUNCTION__, $args, array('event' => 'args'));
+		$args = self::_applyFilter(self::class, __FUNCTION__, $args, array('event' => 'args'));
+		$args = self::_applyFilter(static::class, __FUNCTION__, $args, array('event' => 'args'));
 
 		$defaults = array(
 			'type' => 'natural',
@@ -1021,8 +1021,8 @@ Abstract class He2Model {
 		if (!empty($args['on']))
 			$join .= ' ON ' . $args['on'];
 
-		$join = self::_applyFilter(get_class(), __FUNCTION__, $join, array('event' => 'return'));
-		$join = self::_applyFilter(get_called_class(), __FUNCTION__, $join, array('event' => 'return'));
+		$join = self::_applyFilter(self::class, __FUNCTION__, $join, array('event' => 'return'));
+		$join = self::_applyFilter(static::class, __FUNCTION__, $join, array('event' => 'return'));
 
 		return $join;
 	}
@@ -1039,8 +1039,8 @@ Abstract class He2Model {
 	 */
 	protected function _getModelDefaults($full_schema = true) {
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		$defaults = array();
 
@@ -1054,8 +1054,8 @@ Abstract class He2Model {
 			}
 		}
 
-		$defaults = self::_applyFilter(get_class(), __FUNCTION__, $defaults, array('event' => 'return'));
-		$defaults = self::_applyFilter(get_called_class(), __FUNCTION__, $defaults, array('event' => 'return'));
+		$defaults = self::_applyFilter(self::class, __FUNCTION__, $defaults, array('event' => 'return'));
+		$defaults = self::_applyFilter(static::class, __FUNCTION__, $defaults, array('event' => 'return'));
 
 		return $defaults;
 	}//end
@@ -1068,11 +1068,11 @@ Abstract class He2Model {
 	 */
 	protected function _getFieldOptionsDefaults() {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		$defaults = array(
 			'primary_key' => false,
@@ -1084,8 +1084,8 @@ Abstract class He2Model {
 			'exclude' => false
 		);
 
-		$defaults = self::_applyFilter(get_class(), __FUNCTION__, $defaults, array('event' => 'return'));
-		$defaults = self::_applyFilter(get_called_class(), __FUNCTION__, $defaults, array('event' => 'return'));
+		$defaults = self::_applyFilter(self::class, __FUNCTION__, $defaults, array('event' => 'return'));
+		$defaults = self::_applyFilter(static::class, __FUNCTION__, $defaults, array('event' => 'return'));
 
 		return $defaults;
 	}
@@ -1103,18 +1103,18 @@ Abstract class He2Model {
 	 */
 	protected function _formTableName($name) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $name);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__, $name);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $name);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $name);
 
 		if (isset($this->_config['table_name']) && $this->_config['table_name'] != null && !empty($this->_config['table_name'])) {
 			return $this->_config['table_name'];
 		}
 
-		$name = self::_applyFilter(get_class(), __FUNCTION__, $name, array('event' => 'args'));
-		$name = self::_applyFilter(get_called_class(), __FUNCTION__, $name, array('event' => 'args'));
+		$name = self::_applyFilter(self::class, __FUNCTION__, $name, array('event' => 'args'));
+		$name = self::_applyFilter(static::class, __FUNCTION__, $name, array('event' => 'args'));
 
 		preg_match_all('/[A-Z][^A-Z]*/', $name, $results);
 		$table = '';
@@ -1125,11 +1125,11 @@ Abstract class He2Model {
 				$table .= '_' . strtolower($part);
 		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $name, $table);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $name, $table);
+		self::_notify(self::class . '::' . __FUNCTION__, $this, $name, $table);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $name, $table);
 
-		$table = self::_applyFilter(get_class(), __FUNCTION__, $table, array('event' => 'return'));
-		$table = self::_applyFilter(get_called_class(), __FUNCTION__, $table, array('event' => 'return'));
+		$table = self::_applyFilter(self::class, __FUNCTION__, $table, array('event' => 'return'));
+		$table = self::_applyFilter(static::class, __FUNCTION__, $table, array('event' => 'return'));
 
 		return $table;
 	}
@@ -1145,20 +1145,20 @@ Abstract class He2Model {
 	 */
 	protected function _configureConnection(array $options = array()) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $options);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__, $options);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $options);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $options);
 
-		$options = self::_applyFilter(get_class(), __FUNCTION__, $options, array('event' => 'args'));
-		$options = self::_applyFilter(get_called_class(), __FUNCTION__, $options, array('event' => 'args'));
+		$options = self::_applyFilter(self::class, __FUNCTION__, $options, array('event' => 'args'));
+		$options = self::_applyFilter(static::class, __FUNCTION__, $options, array('event' => 'args'));
 
 		if ($this->_config['storage'] === 'gridFS')
 			$options['gridFS'] = true;
 
-		$options = self::_applyFilter(get_class(), __FUNCTION__, $options, array('event' => 'return'));
-		$options = self::_applyFilter(get_called_class(), __FUNCTION__, $options, array('event' => 'return'));
+		$options = self::_applyFilter(self::class, __FUNCTION__, $options, array('event' => 'return'));
+		$options = self::_applyFilter(static::class, __FUNCTION__, $options, array('event' => 'return'));
 
 		return $options;
 	}
@@ -1178,13 +1178,13 @@ Abstract class He2Model {
 	 */
 	protected function _addValidationError($field, $error_message, $display = true) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $field, $error_message);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__, $field, $error_message);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $field, $error_message);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $field, $error_message);
 
-		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(self::class, __FUNCTION__, array(
 			'field' => $field,
 			'error_message' => $error_message
 		), array('event' => 'args'));
@@ -1192,7 +1192,7 @@ Abstract class He2Model {
 		$field = $filtered['field'];
 		$error_message = $filtered['error_message'];
 
-		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(static::class, __FUNCTION__, array(
 			'field' => $field,
 			'error_message' => $error_message
 		), array('event' => 'args'));
@@ -1206,8 +1206,8 @@ Abstract class He2Model {
 			$this->_errors[$field][] = $error_message;
 		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $field, $error_message);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $field, $error_message);
+		self::_notify(self::class . '::' . __FUNCTION__, $this, $field, $error_message);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $field, $error_message);
 	}
 
 	/**
@@ -1222,13 +1222,13 @@ Abstract class He2Model {
 	 */
 	protected function _checkValidationEvent($passed_event, $allowed_events) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $passed_event, $allowed_events);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__, $passed_event, $allowed_events);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $passed_event, $allowed_events);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $passed_event, $allowed_events);
 
-		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(self::class, __FUNCTION__, array(
 			'passed_event' => $passed_event,
 			'allowed_events' => $allowed_events
 		), array('event' => 'args'));
@@ -1236,7 +1236,7 @@ Abstract class He2Model {
 		$passed_event = $filtered['passed_event'];
 		$allowed_events = $filtered['allowed_events'];
 
-		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(static::class, __FUNCTION__, array(
 			'passed_event' => $passed_event,
 			'allowed_events' => $allowed_events
 		), array('event' => 'args'));
@@ -1255,11 +1255,11 @@ Abstract class He2Model {
 			$match = in_array($passed_event, $allowed_events);
 		}
 
-		self::_notify(get_class() . '::' . __FUNCTION__, $this, $match, $passed_event, $allowed_events);
-		self::_notify(get_called_class() . '::' . __FUNCTION__, $this, $match, $passed_event, $allowed_events);
+		self::_notify(self::class . '::' . __FUNCTION__, $this, $match, $passed_event, $allowed_events);
+		self::_notify(static::class . '::' . __FUNCTION__, $this, $match, $passed_event, $allowed_events);
 
-		$match = self::_applyFilter(get_class(), __FUNCTION__, $match, array('event' => 'return'));
-		$match = self::_applyFilter(get_called_class(), __FUNCTION__, $match, array('event' => 'return'));
+		$match = self::_applyFilter(self::class, __FUNCTION__, $match, array('event' => 'return'));
+		$match = self::_applyFilter(static::class, __FUNCTION__, $match, array('event' => 'return'));
 
 		return $match;
 	}
@@ -1274,11 +1274,11 @@ Abstract class He2Model {
 	 */
 	protected function _getValidationRuleDefaults() {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		$defaults = array(
 			'event' => array(
@@ -1289,8 +1289,8 @@ Abstract class He2Model {
 			'include' => null
 		);
 
-		$defaults = self::_applyFilter(get_class(), __FUNCTION__, $defaults, array('event' => 'return'));
-		$defaults = self::_applyFilter(get_called_class(), __FUNCTION__, $defaults, array('event' => 'return'));
+		$defaults = self::_applyFilter(self::class, __FUNCTION__, $defaults, array('event' => 'return'));
+		$defaults = self::_applyFilter(static::class, __FUNCTION__, $defaults, array('event' => 'return'));
 
 		return $defaults;
 	}
@@ -1398,7 +1398,7 @@ Abstract class He2Model {
 				}
 
 				if ($options['results'] === 'model') {
-					$class = get_called_class();
+					$class = static::class;
 					$row = new $class($row);
 				}
 
@@ -1414,7 +1414,7 @@ Abstract class He2Model {
 				while ($row = Database::fetchFields($result)) {
 
 					if ($options['results'] === 'model') {
-						$class = get_called_class();
+						$class = static::class;
 						$row = new $class($row);
 					}
 
@@ -1431,7 +1431,7 @@ Abstract class He2Model {
 					foreach ($rows as $row) {
 
 						if ($options['results'] === 'model') {
-							$class = get_called_class();
+							$class = static::class;
 							$row = new $class($row);
 						}
 
@@ -1467,13 +1467,13 @@ Abstract class He2Model {
 	 */
 	protected function _castData($data, $cast) {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__, $data, $cast);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__, $data, $cast);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $data, $cast);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $data, $cast);
 
-		$filtered = self::_applyFilter(get_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(self::class, __FUNCTION__, array(
 			'data' => $data,
 			'cast' => $cast
 		), array('event' => 'args'));
@@ -1481,7 +1481,7 @@ Abstract class He2Model {
 		$data = $filtered['data'];
 		$cast = $filtered['cast'];
 
-		$filtered = self::_applyFilter(get_called_class(), __FUNCTION__, array(
+		$filtered = self::_applyFilter(static::class, __FUNCTION__, array(
 			'data' => $data,
 			'cast' => $cast
 		), array('event' => 'args'));
@@ -1508,8 +1508,8 @@ Abstract class He2Model {
 			$data = Conversions::objectToArray($data);
 		}
 
-		$data = self::_applyFilter(get_class(), __FUNCTION__, $data, array('event' => 'return'));
-		$data = self::_applyFilter(get_called_class(), __FUNCTION__, $data, array('event' => 'return'));
+		$data = self::_applyFilter(self::class, __FUNCTION__, $data, array('event' => 'return'));
+		$data = self::_applyFilter(static::class, __FUNCTION__, $data, array('event' => 'return'));
 
 		return $data;
 	}
@@ -1523,11 +1523,11 @@ Abstract class He2Model {
 	 */
 	protected function _setConnection() {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		if ($this->_config['connection'] != null) {
 			$this->_config['stored_connection'] = Database::getDatabaseLink();
@@ -1548,11 +1548,11 @@ Abstract class He2Model {
 	 */
 	protected function _resetConnection() {
 
-		if (self::_hasAdapter(get_class(), __FUNCTION__))
-			return self::_callAdapter(get_class(), __FUNCTION__);
+		if (self::_hasAdapter(self::class, __FUNCTION__))
+			return self::_callAdapter(self::class, __FUNCTION__);
 
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 
 		if ($this->_config['connection'] != null) {
 			Database::setDatabase($this->_config['stored_connection_name']);

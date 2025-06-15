@@ -111,8 +111,8 @@ Abstract class He2Controller {
 	 */
 	public function controllerExtensionLoader($class) {
 		
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $class );
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $class );
 		
 		$filename = $class . '.php';
 		$file = SITE_PATH . 'extensions' . DS . 'controllers' . DS . $filename;
@@ -131,8 +131,8 @@ Abstract class He2Controller {
 	 */
 	public function getTemplate() {
 			
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 		
 		return $this->_template;
 	}
@@ -147,8 +147,8 @@ Abstract class He2Controller {
 	 */
 	public function getView() {
 		
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 		
 		return $this->_view;
 	}
@@ -201,8 +201,8 @@ Abstract class He2Controller {
 	 */
 	public function redirect($url, $options = array()) {
 		
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__, $url, $options );
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__, $url, $options );
 		
 		$object = new Redirect($url, $options);
 		
@@ -215,8 +215,8 @@ Abstract class He2Controller {
 	 * @return void
 	 */
 	public function error404() {
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 		
 		echo "Error 404 Page Not Found";
 		
@@ -231,8 +231,8 @@ Abstract class He2Controller {
 	 */
 	public function cleanup() {
 		
-		if (self::_hasAdapter(get_called_class(), __FUNCTION__))
-			return self::_callAdapter(get_called_class(), __FUNCTION__);
+		if (self::_hasAdapter(static::class, __FUNCTION__))
+			return self::_callAdapter(static::class, __FUNCTION__);
 		
 		spl_autoload_unregister (array($this, 'controllerExtensionLoader'));
 		unset($this -> _extensions);
